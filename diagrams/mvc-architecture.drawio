@@ -1,0 +1,79 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="mvc-architecture" name="MVC Architecture">
+    <mxGraphModel dx="1180" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="browser" value="User Browser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="view" value="View (JSP/UI)&#xa;src/main/webapp" style="swimlane;whiteSpace=wrap;html=1;startSize=36;fillColor=#eff6ff;strokeColor=#2563eb;" vertex="1" parent="1">
+          <mxGeometry x="230" y="120" width="210" height="410" as="geometry"/>
+        </mxCell>
+        <mxCell id="chat" value="tutor-chat.jsp&#xa;AI chat screen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#93c5fd;" vertex="1" parent="view">
+          <mxGeometry x="30" y="70" width="150" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="history" value="history.jsp&#xa;Question history screen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#93c5fd;" vertex="1" parent="view">
+          <mxGeometry x="30" y="170" width="150" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="assets" value="assets/&#xa;CSS, JS, Images" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#93c5fd;" vertex="1" parent="view">
+          <mxGeometry x="30" y="270" width="150" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="controller" value="Controller (Servlet/Filter)&#xa;src/main/java" style="swimlane;whiteSpace=wrap;html=1;startSize=36;fillColor=#f0fdf4;strokeColor=#16a34a;" vertex="1" parent="1">
+          <mxGeometry x="500" y="150" width="230" height="330" as="geometry"/>
+        </mxCell>
+        <mxCell id="filter" value="filter.ValidateFilter&#xa;Encoding / validation gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#86efac;" vertex="1" parent="controller">
+          <mxGeometry x="35" y="75" width="160" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="servlet" value="controller.TutorServlet&#xa;Receive request and route response" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#86efac;" vertex="1" parent="controller">
+          <mxGeometry x="35" y="190" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="model" value="Model (DAO/Service/DTO)&#xa;src/main/java" style="swimlane;whiteSpace=wrap;html=1;startSize=36;fillColor=#fff7ed;strokeColor=#ea580c;" vertex="1" parent="1">
+          <mxGeometry x="790" y="80" width="240" height="470" as="geometry"/>
+        </mxCell>
+        <mxCell id="service" value="service.GeminiService&#xa;AI tutor API logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#fdba74;" vertex="1" parent="model">
+          <mxGeometry x="40" y="70" width="160" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="dao" value="model.dao.ErrorLogDAO&#xa;JDBC/database access" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#fdba74;" vertex="1" parent="model">
+          <mxGeometry x="40" y="180" width="160" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="dto" value="model.dto.UserDTO&#xa;Transfer user data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#fdba74;" vertex="1" parent="model">
+          <mxGeometry x="40" y="290" width="160" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="gemini" value="Gemini API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeColor=#9333ea;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="170" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="database" value="Database" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fefce8;strokeColor=#ca8a04;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="300" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="browser" target="view" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="view" target="filter" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="filter" target="servlet" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="servlet" target="service" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="servlet" target="dao" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="servlet" target="dto" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="service" target="gemini" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="dao" target="database" style="endArrow=block;html=1;rounded=0;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="servlet" target="chat" style="endArrow=block;html=1;rounded=0;dashed=1;strokeColor=#64748b;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
