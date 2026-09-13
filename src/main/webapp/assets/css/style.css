@@ -52,3 +52,33 @@ button {
     border-left: 4px solid #2563eb;
     background: #eef4ff;
 }
+
+.page-link {
+    margin-top: 20px;
+}
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.history-table th,
+.history-table td {
+    padding: 12px;
+    border-bottom: 1px solid #d8dee9;
+    text-align: left;
+}
+
+.history-table th {
+    background: #f1f5f9;
+}

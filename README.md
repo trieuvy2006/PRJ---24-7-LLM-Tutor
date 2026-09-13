@@ -15,7 +15,9 @@ src/main/java/
 src/main/webapp/
 ├── assets/          CSS, JS, Images
 ├── tutor-chat.jsp   AI chat UI
-└── history.jsp      Question history UI
+├── history.jsp      Question history UI
+├── tutor-chat.html  Static demo UI for screenshots
+└── history.html     Static demo history page
 ```
 
 ## MVC Diagram
@@ -25,3 +27,9 @@ src/main/webapp/
 - AI usage log draft: `docs/ai-usage-log.md`
 
 Open the `.drawio` file with diagrams.net/draw.io to export PNG for the weekly report.
+
+For a quick browser preview without Tomcat, open:
+
+```text
+src/main/webapp/tutor-chat.html
+```
