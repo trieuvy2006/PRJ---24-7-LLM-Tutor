@@ -1,0 +1,79 @@
+<mxfile host="Electron">
+  <diagram name="Screen Flow - 24/7 LLM Tutor" id="ScreenFlowGroup6">
+    <mxGraphModel dx="2671" dy="894" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node_login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#6366f1;fontColor=#ffffff;strokeWidth=2;fontSize=14;fontStyle=1;" value="&lt;strong&gt;Login / Authentication Portal&lt;/strong&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="500" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="node_student_dash" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#3b82f6;fontColor=#ffffff;strokeWidth=2;fontSize=13;fontStyle=1;" value="Student Dashboard" vertex="1">
+          <mxGeometry height="60" width="180" x="170" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="node_lecturer_dash" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#ec4899;fontColor=#ffffff;strokeWidth=2;fontSize=13;fontStyle=1;" value="&lt;strong&gt;Lecturer Dashboard&lt;/strong&gt;" vertex="1">
+          <mxGeometry height="60" width="180" x="740" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_login_student" edge="1" parent="1" source="node_login" style="endArrow=classic;html=1;strokeColor=#6366f1;strokeWidth=2;" target="node_student_dash" value="Role: Student">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_login_lecturer" edge="1" parent="1" source="node_login" style="endArrow=classic;html=1;strokeColor=#ec4899;strokeWidth=2;" target="node_lecturer_dash" value="Role: Lecturer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node_chat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#818cf8;fontColor=#ffffff;fontSize=12;" value="4. 24/7 AI Tutor Chat &amp; Error Explainer" vertex="1">
+          <mxGeometry height="60" width="180" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="node_roadmap" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#818cf8;fontColor=#ffffff;fontSize=12;" value="5. Personalized Learning Roadmap" vertex="1">
+          <mxGeometry height="60" width="180" x="240" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="node_assignment" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#818cf8;fontColor=#ffffff;fontSize=12;" value="6. Assignment &amp; AI Submission Portal" vertex="1">
+          <mxGeometry height="60" width="180" x="460" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="node_profile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e1b4b;strokeColor=#818cf8;fontColor=#ffffff;fontSize=12;" value="7. Profile &amp; Skill Analytics" vertex="1">
+          <mxGeometry height="60" width="160" x="660" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_dash_chat" edge="1" parent="1" source="node_student_dash" style="endArrow=classic;html=1;strokeColor=#818cf8;" target="node_chat" value="Ask AI / Fix Code Errors">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_dash_roadmap" edge="1" parent="1" source="node_student_dash" style="endArrow=classic;html=1;strokeColor=#818cf8;" target="node_roadmap" value="View Learning Roadmap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_dash_assign" edge="1" parent="1" source="node_student_dash" style="endArrow=classic;html=1;strokeColor=#818cf8;" target="node_assignment" value="&lt;strong&gt;Submit Assignment&lt;/strong&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_dash_prof" edge="1" parent="1" source="node_student_dash" style="endArrow=classic;html=1;strokeColor=#818cf8;" target="node_profile" value="View Skills">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node_chat_sub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#06b6d4;fontColor=#ffffff;fontSize=11;" value="&lt;strong&gt;Submit Code Error → AI Teaching Suggestions&lt;/strong&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="-10" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_chat_sub" edge="1" parent="1" source="node_chat" style="endArrow=classic;html=1;strokeColor=#06b6d4;" target="node_chat_sub">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node_roadmap_sub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#06b6d4;fontColor=#ffffff;fontSize=11;" value="Topic Node Details &amp;amp; Practice" vertex="1">
+          <mxGeometry height="50" width="180" x="240" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_roadmap_sub" edge="1" parent="1" source="node_roadmap" style="endArrow=classic;html=1;strokeColor=#06b6d4;" target="node_roadmap_sub">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node_assign_sub" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#06b6d4;fontColor=#ffffff;fontSize=11;" value="6.1 Upload ZIP + SHA-256 + AI Feedback" vertex="1">
+          <mxGeometry height="50" width="180" x="460" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_assign_sub" edge="1" parent="1" source="node_assignment" style="endArrow=classic;html=1;strokeColor=#06b6d4;" target="node_assign_sub">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="node_lec_analytics" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#f472b6;fontColor=#ffffff;fontSize=12;" value="Class Error Analytics &amp;amp; Monitoring" vertex="1">
+          <mxGeometry height="60" width="180" x="840" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="node_lec_prompt" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#f472b6;fontColor=#ffffff;fontSize=12;" value="Manage AI Prompts &amp;amp; Roadmap Rules" vertex="1">
+          <mxGeometry height="60" width="180" x="1040" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_lec_ana" edge="1" parent="1" source="node_lecturer_dash" style="endArrow=classic;html=1;strokeColor=#f472b6;" target="node_lec_analytics" value="View Analytics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_lec_prm" edge="1" parent="1" source="node_lecturer_dash" style="endArrow=classic;html=1;strokeColor=#f472b6;" target="node_lec_prompt" value="Configure AI">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
