@@ -2,6 +2,16 @@
 
 Java Web MVC skeleton for the PRJ301 AI Tutor project.
 
+## Open in NetBeans
+
+This project is configured as a Maven Java Web project for NetBeans.
+
+1. Open NetBeans.
+2. Choose **File > Open Project**.
+3. Select this project folder: `PRJ---24-7-LLM-Tutor`.
+4. Use **Clean and Build** to generate `target/llm-tutor.war`.
+5. To run the web app, configure a Tomcat server in NetBeans and run/deploy the Maven web project.
+
 ## Milestone 1 Structure
 
 ```text
