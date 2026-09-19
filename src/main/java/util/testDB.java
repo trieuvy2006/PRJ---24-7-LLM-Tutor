@@ -1,16 +1,15 @@
-package model.dao;
+package util;
 
-import util.DBUtils;
 import java.sql.Connection;
 
-public class ErrorLogDAO {
+public class TestDB {
 
-    public void saveError(String source, String message) {
+    public static void main(String[] args) {
 
         try {
             Connection conn = DBUtils.getConnection();
 
-            System.out.println("Connected to AITA_DB!");
+            System.out.println("CONNECTED TO DATABASE!");
 
             conn.close();
 
