@@ -12,7 +12,7 @@ public class DBUtils {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
         String url =
-                "jdbc:sqlserver://TRIEUVY:1433;"
+                "jdbc:sqlserver://localhost:1434;"
                 + "databaseName=AITA_DB;"
                 + "encrypt=true;"
                 + "trustServerCertificate=true;";
