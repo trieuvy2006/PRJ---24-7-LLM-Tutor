@@ -12,6 +12,30 @@ This project is configured as a Maven Java Web project for NetBeans.
 4. Use **Clean and Build** to generate `target/llm-tutor.war`.
 5. To run the web app, configure a Tomcat server in NetBeans and run/deploy the Maven web project.
 
+## Database Setup
+
+The SQL Server database is not stored in GitHub. Each teammate needs to create a local database from the script:
+
+```text
+data/setup_database.sql
+```
+
+In SQL Server Management Studio, connect with an admin Windows account, open `data/setup_database.sql`, then execute it. The script creates:
+
+- Database: `AITA_DB`
+- SQL login/user: `llm_tutor`
+- Table: `dbo.ErrorLogs`
+
+After running the script, set these environment variables on each machine:
+
+```text
+DB_URL=jdbc:sqlserver://localhost:1434;databaseName=AITA_DB;encrypt=true;trustServerCertificate=true;
+DB_USER=llm_tutor
+DB_PASSWORD=your_sql_login_password
+```
+
+Do not commit real database passwords to GitHub. Use `data/db.env.example` as a template only.
+
 ## Milestone 1 Structure
 
 ```text
