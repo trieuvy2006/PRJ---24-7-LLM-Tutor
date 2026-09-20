@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AITA" default="war" basedir=".">
+    <property file="nbproject/project.properties"/>
+    <property name="tomcat.home" location="C:/Program Files/Apache Software Foundation/Tomcat 10.0"/>
+    <path id="compile.classpath">
+        <pathelement location="${file.reference.sqljdbc42-6.0.8112.jar}"/>
+        <fileset dir="${tomcat.home}/lib"><include name="servlet-api.jar"/></fileset>
+    </path>
+    <target name="clean"><delete dir="${build.dir}"/><delete dir="${dist.dir}"/></target>
+    <target name="compile">
+        <mkdir dir="${build.web.dir}/WEB-INF/classes"/>
+        <javac srcdir="${src.dir}" destdir="${build.web.dir}/WEB-INF/classes" includeantruntime="false" source="${javac.source}" target="${javac.target}" encoding="UTF-8" classpathref="compile.classpath"/>
+        <copy todir="${build.web.dir}"><fileset dir="${web.docbase.dir}"/></copy>
+        <copy todir="${build.web.dir}/WEB-INF/lib"><fileset file="${file.reference.sqljdbc42-6.0.8112.jar}"/></copy>
+    </target>
+    <target name="war" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.war}" basedir="${build.web.dir}"/>
+    </target>
+</project>

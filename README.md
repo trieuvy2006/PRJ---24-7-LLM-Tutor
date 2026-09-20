@@ -1,81 +1,19 @@
-# PRJ---24-7-LLM-Tutor
+# AITA
 
-Java Web MVC skeleton for the PRJ301 AI Tutor project.
-
-## Run with Tomcat 10
-
-This project uses Jakarta Servlet 5.0 and is compatible with Tomcat 10.0.x.
-
-1. Build the WAR with `mvn clean package`.
-2. Copy `target\llm-tutor.war` to the Tomcat `webapps` folder.
-3. Start Tomcat with `bin\startup.bat`.
-4. Open `http://localhost:8080/llm-tutor/`.
-
-The Java sources use the `jakarta.servlet.*` namespace. Do not change these
-imports back to `javax.servlet.*` when running on Tomcat 10.
-
-## Open in NetBeans
-
-This project is configured as a Maven Java Web project for NetBeans.
-
-1. Open NetBeans.
-2. Choose **File > Open Project**.
-3. Select this project folder: `PRJ---24-7-LLM-Tutor`.
-4. Use **Clean and Build** to generate `target/llm-tutor.war`.
-5. To run the web app, configure a Tomcat 10 server in NetBeans and run/deploy the Maven web project.
-
-## Database Setup
-
-The SQL Server database is not stored in GitHub. Each teammate needs to create a local database from the script:
+NetBeans **Java Web Application** (Ant), not Maven. The app demonstrates the full basic flow:
 
 ```text
-data/setup_database.sql
+JSP form → DatabaseDemoServlet → DemoMessageDAO → DBContext → SQL Server
 ```
 
-In SQL Server Management Studio, connect with an admin Windows account, open `data/setup_database.sql`, then execute it. The script creates:
+## Run in NetBeans
 
-- Database: `AITA_DB`
-- SQL login/user: `llm_tutor`
-- Table: `dbo.ErrorLogs`
+1. Open this folder in NetBeans as project **AITA**.
+2. Confirm the library `lib/sqljdbc42-6.0.8112.jar` appears under Libraries.
+3. Choose Apache Tomcat 10.0 as the server (Tomcat 10.0 works with JDK 8).
+4. Run `data/setup_database.sql` in the already-created `AITA_DB` database.
+5. Run the project and open `http://localhost:8080/AITA/`.
 
-After running the script, set these environment variables on each machine:
+`src/java/util/DBContext.java` is configured for SQL Server on `localhost:1434`, database `AITA_DB`, user `sa`, password `123`. For a shared/public repository, change these values to local configuration before publishing real credentials.
 
-```text
-DB_URL=jdbc:sqlserver://localhost:1434;databaseName=AITA_DB;encrypt=true;trustServerCertificate=true;
-DB_USER=llm_tutor
-DB_PASSWORD=your_sql_login_password
-```
-
-Do not commit real database passwords to GitHub. Use `data/db.env.example` as a template only.
-
-## Milestone 1 Structure
-
-```text
-src/main/java/
-├── controller/      Servlet controllers
-├── filter/          Request validation filters
-├── model/dao/       JDBC DAO classes
-├── model/dto/       Data Transfer Objects
-└── service/         AI tutor/API logic
-
-src/main/webapp/
-├── assets/          CSS, JS, Images
-├── tutor-chat.jsp   AI chat UI
-├── history.jsp      Question history UI
-├── tutor-chat.html  Static demo UI for screenshots
-└── history.html     Static demo history page
-```
-
-## MVC Diagram
-
-- Markdown/Mermaid version: `docs/mvc-architecture.md`
-- Draw.io version: `diagrams/mvc-architecture.drawio`
-- AI usage log draft: `docs/ai-usage-log.md`
-
-Open the `.drawio` file with diagrams.net/draw.io to export PNG for the weekly report.
-
-For a quick browser preview without Tomcat, open:
-
-```text
-src/main/webapp/tutor-chat.html
-```
+The page allows adding a short message and immediately lists rows read from `dbo.DemoMessages`, making the JDBC connection easy to demonstrate.
