@@ -2,6 +2,18 @@
 
 Java Web MVC skeleton for the PRJ301 AI Tutor project.
 
+## Run with Tomcat 10
+
+This project uses Jakarta Servlet 5.0 and is compatible with Tomcat 10.0.x.
+
+1. Build the WAR with `mvn clean package`.
+2. Copy `target\llm-tutor.war` to the Tomcat `webapps` folder.
+3. Start Tomcat with `bin\startup.bat`.
+4. Open `http://localhost:8080/llm-tutor/`.
+
+The Java sources use the `jakarta.servlet.*` namespace. Do not change these
+imports back to `javax.servlet.*` when running on Tomcat 10.
+
 ## Open in NetBeans
 
 This project is configured as a Maven Java Web project for NetBeans.
@@ -10,7 +22,7 @@ This project is configured as a Maven Java Web project for NetBeans.
 2. Choose **File > Open Project**.
 3. Select this project folder: `PRJ---24-7-LLM-Tutor`.
 4. Use **Clean and Build** to generate `target/llm-tutor.war`.
-5. To run the web app, configure a Tomcat server in NetBeans and run/deploy the Maven web project.
+5. To run the web app, configure a Tomcat 10 server in NetBeans and run/deploy the Maven web project.
 
 ## Database Setup
 
