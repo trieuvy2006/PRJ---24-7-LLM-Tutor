@@ -1,9 +1,9 @@
 # AITA
 
-NetBeans **Java Web Application** (Ant), not Maven. The app demonstrates the full basic flow:
+NetBeans **Java Web Application** (Ant), not Maven. The app shows the full basic flow:
 
 ```text
-JSP form → DatabaseDemoServlet → DemoMessageDAO → DBContext → SQL Server
+JSP → MessageServlet → MessageDAO → DBContext → SQL Server
 ```
 
 ## Run in NetBeans
@@ -16,4 +16,4 @@ JSP form → DatabaseDemoServlet → DemoMessageDAO → DBContext → SQL Server
 
 `src/java/util/DBContext.java` is configured for SQL Server on `localhost:1434`, database `AITA_DB`, user `sa`, password `123`. For a shared/public repository, change these values to local configuration before publishing real credentials.
 
-The page allows adding a short message and immediately lists rows read from `dbo.DemoMessages`, making the JDBC connection easy to demonstrate.
+The page lists rows read from `dbo.Messages`, making the JDBC connection easy to show.
