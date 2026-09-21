@@ -1,45 +1,19 @@
-# PRJ---24-7-LLM-Tutor
+# AITA
 
-Java Web MVC skeleton for the PRJ301 AI Tutor project.
-
-## Open in NetBeans
-
-This project is configured as a Maven Java Web project for NetBeans.
-
-1. Open NetBeans.
-2. Choose **File > Open Project**.
-3. Select this project folder: `PRJ---24-7-LLM-Tutor`.
-4. Use **Clean and Build** to generate `target/llm-tutor.war`.
-5. To run the web app, configure a Tomcat server in NetBeans and run/deploy the Maven web project.
-
-## Milestone 1 Structure
+NetBeans **Java Web Application** (Ant), not Maven. The app shows the full basic flow:
 
 ```text
-src/main/java/
-├── controller/      Servlet controllers
-├── filter/          Request validation filters
-├── model/dao/       JDBC DAO classes
-├── model/dto/       Data Transfer Objects
-└── service/         AI tutor/API logic
-
-src/main/webapp/
-├── assets/          CSS, JS, Images
-├── tutor-chat.jsp   AI chat UI
-├── history.jsp      Question history UI
-├── tutor-chat.html  Static demo UI for screenshots
-└── history.html     Static demo history page
+JSP → MessageServlet → MessageDAO → DBContext → SQL Server
 ```
 
-## MVC Diagram
+## Run in NetBeans
 
-- Markdown/Mermaid version: `docs/mvc-architecture.md`
-- Draw.io version: `diagrams/mvc-architecture.drawio`
-- AI usage log draft: `docs/ai-usage-log.md`
+1. Open this folder in NetBeans as project **AITA**.
+2. Confirm the library `lib/sqljdbc42-6.0.8112.jar` appears under Libraries.
+3. Choose Apache Tomcat 10.0 as the server (Tomcat 10.0 works with JDK 8).
+4. Run `data/setup_database.sql` in the already-created `AITA_DB` database.
+5. Run the project and open `http://localhost:8080/AITA/`.
 
-Open the `.drawio` file with diagrams.net/draw.io to export PNG for the weekly report.
+`src/java/util/DBContext.java` is configured for SQL Server on `localhost:1434`, database `AITA_DB`, user `sa`, password `123`. For a shared/public repository, change these values to local configuration before publishing real credentials.
 
-For a quick browser preview without Tomcat, open:
-
-```text
-src/main/webapp/tutor-chat.html
-```
+The page lists rows read from `dbo.Messages`, making the JDBC connection easy to show.
