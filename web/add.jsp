@@ -20,7 +20,7 @@
             Enter Password:<input type="text" name="password_hash"/><br/>
             Enter Full Name:<input type="Text" name="full_name"/><br/>
             Enter Email:<input type="Text" name="email"/><br/>
-            Enter Phone:<input type="number" name="phone"/><br/>
+            Enter Phone:<input type="text" name="phone"/><br/>
             <input type="submit" value="Save"/>
         </form>
     </body>
