@@ -19,17 +19,17 @@ import model.User;
  *
  * @author trieuvy
  */
-@WebServlet(name = "UserServlet", urlPatterns = {"/user"})
+@WebServlet(name = "UserServlet", urlPatterns = { "/user" })
 public class UserServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,7 +39,7 @@ public class UserServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");            
+            out.println("<title>Servlet UserServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
@@ -48,32 +48,33 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         UserDAO c = new UserDAO();
-    List<User> list = c.getAll();
-    request.setAttribute("data" , list);
-    request.getRequestDispatcher("user.jsp").forward(request, response);
-    
+        UserDAO c = new UserDAO();
+        List<User> list = c.getAll();
+        request.setAttribute("data", list);
+        request.getRequestDispatcher("user.jsp").forward(request, response);
+
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
