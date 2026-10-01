@@ -1,5 +1,5 @@
 package controller;
- 
+
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,14 +9,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.User;
- 
+
 /**
  *
  * @author trieuvy
  */
-@WebServlet(name = "AddServlet", urlPatterns = {"/add"})
+@WebServlet(name = "AddServlet", urlPatterns = { "/add" })
 public class AddServlet extends HttpServlet {
- 
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -32,7 +32,7 @@ public class AddServlet extends HttpServlet {
             out.println("</html>");
         }
     }
- 
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,7 +43,7 @@ public class AddServlet extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         UserDAO udb = new UserDAO();
- 
+
         try {
             int role_id = Integer.parseInt(role_id_raw);
             User uNew = new User(role_id, username, password_hash, full_name, email, phone);
@@ -59,13 +59,13 @@ public class AddServlet extends HttpServlet {
             request.getRequestDispatcher("add.jsp").forward(request, response);
         }
     }
- 
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
- 
+
     @Override
     public String getServletInfo() {
         return "Short description";
