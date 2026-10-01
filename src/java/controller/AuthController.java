@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import model.User;
 import service.AuthService;
@@ -63,6 +64,20 @@ public class AuthController extends HttpServlet {
             HttpSession session = request.getSession(true);
             session.setAttribute("currentUser", user);
             session.setAttribute("role", user.getRole_name());
+
+            // Xử lý Remember Me (Cookie)
+            String remember = request.getParameter("remember");
+            Cookie cUser = new Cookie("cuser", username);
+            Cookie cPass = new Cookie("cpass", password);
+            if (remember != null) {
+                cUser.setMaxAge(60 * 60 * 24 * 7); // 7 days
+                cPass.setMaxAge(60 * 60 * 24 * 7);
+            } else {
+                cUser.setMaxAge(0);
+                cPass.setMaxAge(0);
+            }
+            response.addCookie(cUser);
+            response.addCookie(cPass);
 
             // Chuyển hướng tới trang quản lý người dùng sau khi đăng nhập thành công
             response.sendRedirect(request.getContextPath() + "/user");

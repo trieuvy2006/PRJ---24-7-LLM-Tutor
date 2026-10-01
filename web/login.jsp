@@ -27,11 +27,15 @@
         <form action="login" method="post">
             <div class="form-group">
                 <label>Tên đăng nhập:</label>
-                <input type="text" name="username" value="${username}" required autofocus />
+                <input type="text" name="username" value="${not empty username ? username : cookie.cuser.value}" required autofocus />
             </div>
             <div class="form-group">
                 <label>Mật khẩu:</label>
-                <input type="password" name="password" required />
+                <input type="password" name="password" value="${cookie.cpass.value}" required />
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" name="remember" style="width: auto;" id="remember" ${not empty cookie.cuser ? 'checked' : ''} />
+                <label for="remember" style="margin-bottom: 0;">Ghi nhớ đăng nhập</label>
             </div>
             <button type="submit" class="btn">Đăng nhập</button>
         </form>
