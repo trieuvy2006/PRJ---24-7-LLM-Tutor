@@ -36,10 +36,10 @@ public class UserController extends HttpServlet {
             try {
                 User profile = userService.getUserById(currentUser, currentUser.getUser_id());
                 request.setAttribute("user", profile);
-                request.getRequestDispatcher("update.jsp").forward(request, response);
+                request.getRequestDispatcher("/update.jsp").forward(request, response);
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
-                request.getRequestDispatcher("user.jsp").forward(request, response);
+                request.getRequestDispatcher("/user.jsp").forward(request, response);
             }
             return;
         }
@@ -54,13 +54,13 @@ public class UserController extends HttpServlet {
             }
             List<User> list = userService.getAllUsers(currentUser);
             request.setAttribute("data", list);
-            request.getRequestDispatcher("user.jsp").forward(request, response);
+            request.getRequestDispatcher("/user.jsp").forward(request, response);
         } catch (SecurityException e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("user.jsp").forward(request, response);
+            request.getRequestDispatcher("/user.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Lỗi: " + e.getMessage());
-            request.getRequestDispatcher("user.jsp").forward(request, response);
+            request.getRequestDispatcher("/user.jsp").forward(request, response);
         }
     }
 
@@ -98,7 +98,7 @@ public class UserController extends HttpServlet {
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("update.jsp").forward(request, response);
+                request.getRequestDispatcher("/update.jsp").forward(request, response);
             }
         }
     }

@@ -52,11 +52,11 @@ public class AddServlet extends HttpServlet {
                 response.sendRedirect("user");
             } else {
                 request.setAttribute("error", "Insert failed: " + err);
-                request.getRequestDispatcher("add.jsp").forward(request, response);
+                request.getRequestDispatcher("/add.jsp").forward(request, response);
             }
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Role_ID phải là số");
-            request.getRequestDispatcher("add.jsp").forward(request, response);
+            request.getRequestDispatcher("/add.jsp").forward(request, response);
         }
     }
 

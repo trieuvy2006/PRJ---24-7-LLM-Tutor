@@ -68,7 +68,7 @@ public class UpdateServlet extends HttpServlet {
             int id = Integer.parseInt(id_raw);
             User u = udb.getUserById(id);
             request.setAttribute("user", u);
-            request.getRequestDispatcher("update.jsp").forward(request, response);
+            request.getRequestDispatcher("/update.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             System.out.println(e);
         }

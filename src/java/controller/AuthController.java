@@ -34,12 +34,12 @@ public class AuthController extends HttpServlet {
         }
 
         if ("/register".equals(path)) {
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
             return;
         }
 
         // Mặc định là /login
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class AuthController extends HttpServlet {
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             request.setAttribute("username", username);
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 
@@ -120,7 +120,7 @@ public class AuthController extends HttpServlet {
             request.setAttribute("email", email);
             request.setAttribute("phone", phone);
             request.setAttribute("student_code", studentCode);
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
         }
     }
 }
