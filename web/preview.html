@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITA — Live UI Preview (Mô phỏng Giao diện Mới)</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+
+    <style>
+        /* Interactive Preview Wrapper */
+        .preview-screen { display: none; }
+        .preview-screen.active { display: block; }
+        
+        .preview-floating-guide {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(17, 20, 36, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-size: 12.5px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+        }
+        .preview-floating-guide strong { color: #f8fafc; }
+        .role-tag-preview {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating Helper -->
+<div class="preview-floating-guide">
+    <span>Đang xem: <strong id="lblScreen">1. Đăng nhập (Split Screen)</strong></span>
+    <span class="role-tag-preview" id="lblRole">Khách</span>
+</div>
+
+<!-- ======================================================== -->
+<!-- MÀN HÌNH 1: LOGIN (SPLIT SCREEN)                          -->
+<!-- ======================================================== -->
+<div id="screen-login" class="preview-screen active">
+    <div class="auth-wrapper">
+        <div class="auth-hero">
+            <div class="auth-hero-glow"></div>
+            <div class="hero-brand">
+                <div class="brand-icon">A</div>
+                <div class="brand-name">AITA Platform</div>
+                <span class="brand-tag">FPT EDU • 24/7 AI</span>
+            </div>
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="status-ping"></span>
+                    <span>Hệ thống AI Tutor đang trực tuyến</span>
+                </div>
+                <h1 class="hero-title">Học tập không gián đoạn cùng <span>Gia sư AI 24/7</span></h1>
+                <p class="hero-desc">Giải đáp lỗi code, gỡ rối thuật toán Java Web và đồng hành cùng sinh viên FPT University mọi lúc, mọi nơi ngay khi giảng viên vắng mặt.</p>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <div class="feature-icon ai"><i class="bi bi-robot"></i></div>
+                        <div class="feature-text">
+                            <h4>Trợ lý LLM chuyên sâu cho PRJ301</h4>
+                            <p>Tự động phân tích NullPointer, lỗi SQL và cấu trúc MVC theo thời gian thực.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon code"><i class="bi bi-code-slash"></i></div>
+                        <div class="feature-text">
+                            <h4>Gợi ý phương pháp, không chép hộ</h4>
+                            <p>Hướng dẫn tư duy từng bước theo chuẩn đầu ra của môn học.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon speed"><i class="bi bi-lightning-charge-fill"></i></div>
+                        <div class="feature-text">
+                            <h4>Phản hồi tức thì dưới 1 giây</h4>
+                            <p>Sẵn sàng hỗ trợ 24/7 ngay cả trong các buổi ôn thi hay làm đồ án đêm.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-footer">
+                <span>© 2026 PRJ301 — Lập trình Java Web • FPT University</span>
+                <span>AITA Engine v2.4</span>
+            </div>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-top-controls">
+                <button type="button" class="btn-theme-toggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+            </div>
+
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <h2 class="auth-card-title">Đăng nhập</h2>
+                    <p class="auth-card-sub">Chào mừng trở lại! Vui lòng nhập thông tin tài khoản.</p>
+                </div>
+
+                <div id="login-alert" class="alert-box alert-success" style="display:none">
+                    <i class="bi bi-check-circle-fill" style="font-size:16px; flex-shrink:0"></i>
+                    <span id="login-alert-msg">Bạn đã đăng xuất an toàn khỏi hệ thống.</span>
+                </div>
+
+                <form onsubmit="event.preventDefault(); showScreen('dashboard');">
+                    <div class="form-group">
+                        <label class="form-label" for="u1">Tên đăng nhập</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-person-fill input-icon"></i>
+                            <input id="u1" type="text" class="form-input" value="admin" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="p1">Mật khẩu</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-lock-fill input-icon"></i>
+                            <input id="p1" type="password" class="form-input" value="••••••••" required />
+                            <button type="button" class="btn-toggle-pass" aria-label="Hiện/ẩn mật khẩu">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-check-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked />
+                            <span>Ghi nhớ đăng nhập trong 7 ngày</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <span class="spinner"></span>
+                        <span>Đăng nhập vào hệ thống</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>hoặc</span></div>
+                <div class="auth-switch">
+                    Chưa có tài khoản học viên?
+                    <a href="javascript:void(0)" onclick="showScreen('register')">Tạo tài khoản ngay →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MÀN HÌNH 2: REGISTER                                      -->
+<!-- ======================================================== -->
+<div id="screen-register" class="preview-screen">
+    <div class="auth-wrapper">
+        <div class="auth-hero">
+            <div class="auth-hero-glow"></div>
+            <div class="hero-brand">
+                <div class="brand-icon">A</div>
+                <div class="brand-name">AITA Platform</div>
+                <span class="brand-tag">FPT EDU • 24/7 AI</span>
+            </div>
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="status-ping"></span>
+                    <span>Tham gia cộng đồng học tập thông minh</span>
+                </div>
+                <h1 class="hero-title">Khởi tạo hành trình làm chủ <span>Java Web</span> cùng AI</h1>
+                <p class="hero-desc">Đăng ký tài khoản sinh viên chỉ trong vài bước để được cấp quyền truy cập phòng trợ giảng AI, nhận bài tập và theo dõi tiến độ học tập 24/7.</p>
+            </div>
+            <div class="hero-footer">
+                <span>© 2026 PRJ301 — Lập trình Java Web • FPT University</span>
+                <span>AITA Engine v2.4</span>
+            </div>
+        </div>
+
+        <div class="auth-panel">
+            <div class="auth-top-controls">
+                <button type="button" class="btn-theme-toggle">
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+            </div>
+
+            <div class="auth-card wide">
+                <div class="auth-card-header">
+                    <h2 class="auth-card-title">Tạo tài khoản mới</h2>
+                    <p class="auth-card-sub">Điền các thông tin dưới đây để đăng ký tài khoản sinh viên.</p>
+                </div>
+
+                <form onsubmit="event.preventDefault(); showScreen('login'); document.getElementById('login-alert').style.display='flex'; document.getElementById('login-alert-msg').textContent='Đăng ký thành công! Vui lòng đăng nhập.';">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+                        <div class="form-group">
+                            <label class="form-label">Tên đăng nhập (*)</label>
+                            <div class="input-wrapper">
+                                <i class="bi bi-person-fill input-icon"></i>
+                                <input type="text" class="form-input" placeholder="VD: vynt, duynd..." required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mật khẩu (*)</label>
+                            <div class="input-wrapper">
+                                <i class="bi bi-lock-fill input-icon"></i>
+                                <input type="password" class="form-input" placeholder="Tối thiểu 6 ký tự..." required />
+                                <button type="button" class="btn-toggle-pass"><i class="bi bi-eye-fill"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên (*)</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-card-text input-icon"></i>
+                            <input type="text" class="form-input" placeholder="Nguyễn Văn A..." required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email FPT Edu (*)</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-envelope-fill input-icon"></i>
+                            <input type="email" class="form-input" placeholder="example@fpt.edu.vn..." required />
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+                        <div class="form-group">
+                            <label class="form-label">Số điện thoại</label>
+                            <div class="input-wrapper">
+                                <i class="bi bi-telephone-fill input-icon"></i>
+                                <input type="text" class="form-input" placeholder="0987654321..." />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mã sinh viên</label>
+                            <div class="input-wrapper">
+                                <i class="bi bi-upc-scan input-icon"></i>
+                                <input type="text" class="form-input" placeholder="SE180001, QE200035..." />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" style="margin-top:6px">
+                        <span>Tạo tài khoản học viên</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="auth-divider"><span>hoặc</span></div>
+                <div class="auth-switch">
+                    Đã có tài khoản trên AITA?
+                    <a href="javascript:void(0)" onclick="showScreen('login')">Đăng nhập ngay →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- MÀN HÌNH 3: DASHBOARD (USER MANAGEMENT)                   -->
+<!-- ======================================================== -->
+<div id="screen-dashboard" class="preview-screen">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="javascript:void(0)" class="brand-link">
+                    <div class="brand-logo-badge">A</div>
+                    <div class="brand-text">
+                        <span class="brand-title">AITA</span>
+                        <span class="brand-subtitle">24/7 LLM Tutor Platform</span>
+                    </div>
+                </a>
+            </div>
+
+            <div id="sidebarRoleBadge" class="sidebar-role-indicator role-admin">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>QUẢN TRỊ VIÊN (ADMIN)</span>
+            </div>
+
+            <!-- Menu Admin -->
+            <nav id="sidebarAdminNav" class="sidebar-nav">
+                <div class="nav-section-title">Hệ Thống Quản Trị</div>
+                <a href="javascript:void(0)" onclick="showScreen('dashboard')" class="nav-link active">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Quản lý Người dùng</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-book-half"></i>
+                    <span>Môn học & Khóa học</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-cpu-fill"></i>
+                    <span>Cấu hình AI Agent</span>
+                    <span class="nav-badge">GPT/LLM</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Nhật ký Hệ thống</span>
+                </a>
+            </nav>
+
+            <!-- Menu Student -->
+            <nav id="sidebarStudentNav" class="sidebar-nav" style="display:none">
+                <div class="nav-section-title">Học Tập 24/7</div>
+                <a href="javascript:void(0)" class="nav-link active">
+                    <i class="bi bi-robot"></i>
+                    <span>AI Tutor Chatbot</span>
+                    <span class="nav-badge" style="background:#10b981">LIVE</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-journal-code"></i>
+                    <span>Bài tập & Milestones</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Lịch sử Hỏi đáp</span>
+                </a>
+                <a href="javascript:void(0)" class="nav-link">
+                    <i class="bi bi-folder2-open"></i>
+                    <span>Tài liệu Khóa học</span>
+                </a>
+                <a href="javascript:void(0)" onclick="applyAdminTheme()" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    <span>Cộng đồng Học tập</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-widget">
+                    <div id="sidebarAvatar" class="user-avatar-circle">A</div>
+                    <div class="user-info-text">
+                        <div id="sidebarUserName" class="user-display-name">Quản Trị Viên</div>
+                        <div id="sidebarUserRole" class="user-role-name">@admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="app-main">
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button type="button" class="btn-sidebar-toggle" title="Thu gọn / Mở rộng Sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="breadcrumbs">
+                        <span>AITA</span>
+                        <i class="bi bi-chevron-right" style="font-size:11px"></i>
+                        <span id="topbarBreadcrumb">Quản lý Người dùng</span>
+                    </div>
+                </div>
+
+                <div class="topbar-search-wrapper">
+                    <i class="bi bi-search topbar-search-icon"></i>
+                    <input type="text" class="topbar-search-input" placeholder="Tìm nhanh thành viên..." 
+                           onkeyup="document.getElementById('tableSearchInput').value=this.value; window.filterUserTable();" />
+                </div>
+
+                <div class="topbar-right">
+                    <div class="status-pill">
+                        <span class="status-dot-pulse"></span>
+                        <span>AI Tutor: Online</span>
+                    </div>
+                    <button type="button" class="icon-action-btn btn-theme-toggle" title="Đổi theme sáng/tối">
+                        <i class="bi bi-sun-fill"></i>
+                    </button>
+                    <a href="javascript:void(0)" onclick="showScreen('login'); document.getElementById('login-alert').style.display='flex'; document.getElementById('login-alert-msg').textContent='Bạn đã đăng xuất an toàn.'; " class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Đăng xuất</span>
+                    </a>
+                </div>
+            </header>
+
+            <main class="content-body" id="dashboard-content-users">
+                <div class="page-header-row">
+                    <div class="page-header-text">
+                        <h1>Quản lý Tài khoản & Phân quyền</h1>
+                        <p>Xem danh sách, tìm kiếm và phân quyền các tài khoản Admin, Giảng viên và Sinh viên.</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" onclick="showScreen('adduser')" class="btn btn-primary">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>+ Thêm người dùng mới</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-toolbar">
+                        <div class="filter-group">
+                            <input type="text" id="tableSearchInput" class="filter-input" placeholder="Lọc tên, username, email..." onkeyup="window.filterUserTable()" />
+                            <select id="tableRoleFilter" class="filter-select" onchange="window.filterUserTable()">
+                                <option value="">-- Tất cả vai trò --</option>
+                                <option value="1">Quản trị viên (ADMIN)</option>
+                                <option value="2">Giảng viên (INSTRUCTOR)</option>
+                                <option value="3">Sinh viên (STUDENT)</option>
+                            </select>
+                        </div>
+                        <div style="font-size:13px; color:var(--text-muted)">
+                            Tổng số: <strong style="color:var(--text-main)">5</strong> tài khoản
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px">ID</th>
+                                    <th>Người dùng</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th style="width:140px">Vai trò</th>
+                                    <th style="width:110px; text-align:center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody">
+                                <tr class="user-row" data-username="admin" data-fullname="Nguyễn Văn Quản Trị" data-email="admin@fe.edu.vn" data-role-id="1">
+                                    <td style="color:var(--text-subtle); font-weight:600">#1</td>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-cell-avatar">N</div>
+                                            <div class="user-cell-info">
+                                                <h4>Nguyễn Văn Quản Trị</h4>
+                                                <p>@admin</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--text-muted)">admin@fe.edu.vn</td>
+                                    <td style="color:var(--text-muted)">0901234567</td>
+                                    <td><span class="badge-role admin"><i class="bi bi-shield-lock-fill"></i> ADMIN</span></td>
+                                    <td>
+                                        <div class="table-actions" style="justify-content:center">
+                                            <button type="button" onclick="openEditDemo(1, 'admin', 'Nguyễn Văn Quản Trị', 'admin@fe.edu.vn', '0901234567', 1)" class="action-icon-btn"><i class="bi bi-pencil-fill"></i></button>
+                                            <button type="button" onclick="window.openDeleteModal(1, 'admin')" class="action-icon-btn delete"><i class="bi bi-trash3-fill"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="user-row" data-username="dungkt" data-fullname="Nguyễn Văn Dũng" data-email="dungkt@fe.edu.vn" data-role-id="2">
+                                    <td style="color:var(--text-subtle); font-weight:600">#2</td>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-cell-avatar">N</div>
+                                            <div class="user-cell-info">
+                                                <h4>Nguyễn Văn Dũng</h4>
+                                                <p>@dungkt</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--text-muted)">dungkt@fe.edu.vn</td>
+                                    <td style="color:var(--text-muted)">0912345678</td>
+                                    <td><span class="badge-role instructor"><i class="bi bi-mortarboard-fill"></i> INSTRUCTOR</span></td>
+                                    <td>
+                                        <div class="table-actions" style="justify-content:center">
+                                            <button type="button" onclick="openEditDemo(2, 'dungkt', 'Nguyễn Văn Dũng', 'dungkt@fe.edu.vn', '0912345678', 2)" class="action-icon-btn"><i class="bi bi-pencil-fill"></i></button>
+                                            <button type="button" onclick="window.openDeleteModal(2, 'dungkt')" class="action-icon-btn delete"><i class="bi bi-trash3-fill"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="user-row" data-username="trieuvy" data-fullname="Lương Triệu Vỹ" data-email="trieuvy23042006@gmail.com" data-role-id="3">
+                                    <td style="color:var(--text-subtle); font-weight:600">#9</td>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-cell-avatar">L</div>
+                                            <div class="user-cell-info">
+                                                <h4>Lương Triệu Vỹ</h4>
+                                                <p>@trieuvy</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="color:var(--text-muted)">trieuvy23042006@gmail.com</td>
+                                    <td style="color:var(--text-muted)">03449126565</td>
+                                    <td><span class="badge-role student"><i class="bi bi-person-fill"></i> STUDENT</span></td>
+                                    <td>
+                                        <div class="table-actions" style="justify-content:center">
+                                            <button type="button" onclick="openEditDemo(9, 'trieuvy', 'Lương Triệu Vỹ', 'trieuvy23042006@gmail.com', '03449126565', 3)" class="action-icon-btn"><i class="bi bi-pencil-fill"></i></button>
+                                            <button type="button" onclick="window.openDeleteModal(9, 'trieuvy')" class="action-icon-btn delete"><i class="bi bi-trash3-fill"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div id="tableEmptyState" class="table-empty-state" style="display:none">
+                            <div class="empty-icon"><i class="bi bi-folder-x"></i></div>
+                            <div class="empty-title">Không tìm thấy tài khoản phù hợp</div>
+                            <div class="empty-desc">Không có kết quả nào khớp với bộ lọc hiện tại.</div>
+                        </div>
+                    </div>
+
+                    <div class="table-pagination">
+                        <div>Hiển thị 1 đến 3 trong số 3 mục</div>
+                        <div class="pagination-pages">
+                            <button type="button" class="page-btn active">1</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Giao diện dành riêng cho Học sinh / Sinh viên (Student Workspace) -->
+            <main class="content-body" id="dashboard-content-student" style="display:none">
+                <div class="page-header-row">
+                    <div class="page-header-text">
+                        <h1>Không Gian Học Tập & Gia Sư AI 24/7 🎓</h1>
+                        <p>Chào bạn <strong>Nguyễn Đức Duy</strong> (SE180000 - Lớp SE1801). Trợ lý AI đã sẵn sàng hỗ trợ giải đáp mọi bài tập Java Web!</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <span class="status-pill"><span class="status-dot-pulse"></span> LLM Model: PRJ301-Tutor-v2</span>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:24px; margin-bottom:28px">
+                    <!-- Khung Chatbot AI Demo -->
+                    <div class="form-container-card" style="max-width:100%; display:flex; flex-direction:column; height:460px">
+                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:14px; margin-bottom:16px">
+                            <div style="display:flex; align-items:center; gap:10px">
+                                <div class="brand-logo-badge" style="width:32px; height:32px; font-size:15px">🤖</div>
+                                <div>
+                                    <div style="font-weight:700; font-size:14px">Phòng Trò Chuyện Trực Tuyến với AI Tutor</div>
+                                    <div style="font-size:11px; color:var(--text-subtle)">Đang kết nối: PRJ301 (Lập trình Java Web)</div>
+                                </div>
+                            </div>
+                            <span class="badge-role student"><i class="bi bi-circle-fill" style="font-size:7px"></i> Đang hoạt động</span>
+                        </div>
+
+                        <!-- Lịch sử tin nhắn mẫu từ database setup.sql -->
+                        <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:8px">
+                            <div style="align-self:flex-end; background:var(--primary); color:#fff; padding:10px 14px; border-radius:14px 14px 2px 14px; max-width:85%; font-size:13px">
+                                Em bấm nút Submit thì bị lỗi NullPointerException ở dòng 24 TutorServlet.java, nhờ Tutor chỉ giúp lỗi ở đâu ạ?
+                            </div>
+                            <div style="align-self:flex-start; background:var(--bg-surface-elevated); border:1px solid var(--border-color); padding:12px 16px; border-radius:14px 14px 14px 2px; max-width:90%; font-size:13px; line-height:1.6">
+                                <strong>💡 AI Tutor:</strong> Chào bạn Duy! Lỗi <code>NullPointerException</code> xảy ra vì biến <code>errorLogDAO</code> chưa được khởi tạo trước khi gọi phương thức <code>saveErrorLog()</code>. Bạn hãy kiểm tra xem đã sử dụng từ khóa <code>new ErrorLogDAO()</code> trong hàm <code>init()</code> chưa nhé!
+                            </div>
+                        </div>
+
+                        <!-- Thanh nhập câu hỏi -->
+                        <div style="display:flex; gap:10px; margin-top:16px; border-top:1px solid var(--border-color); pt:14px">
+                            <input type="text" class="filter-input" style="flex:1" placeholder="Dán lỗi code (NullPointer, SQL, ClassNotFound) hoặc đặt câu hỏi cho AI..." />
+                            <button type="button" class="btn btn-primary btn-sm"><i class="bi bi-send-fill"></i> Gửi</button>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách Bài tập & Điểm số môn học -->
+                    <div class="table-card" style="padding:24px; display:flex; flex-direction:column; gap:20px">
+                        <div>
+                            <h3 style="font-size:16px; font-weight:700; margin-bottom:4px">Môn học đang theo học</h3>
+                            <p style="font-size:12.5px; color:var(--text-muted)">PRJ301 — Lập trình Java Web (Giảng viên: Nguyễn Văn Dũng)</p>
+                        </div>
+
+                        <div style="display:flex; flex-direction:column; gap:12px">
+                            <div style="padding:14px; border-radius:var(--radius-sm); background:var(--bg-surface-elevated); border:1px solid var(--border-color)">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+                                    <strong style="font-size:13px">Milestone 1 — Cấu trúc MVC</strong>
+                                    <span class="badge-role student">9.5 / 10 Điểm</span>
+                                </div>
+                                <p style="font-size:12px; color:var(--text-muted)">Đã chấm bài: "Cấu trúc package MVC rất chuẩn, trình bày rõ ràng."</p>
+                            </div>
+
+                            <div style="padding:14px; border-radius:var(--radius-sm); background:var(--bg-surface-elevated); border:1px solid var(--border-color)">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px">
+                                    <strong style="font-size:13px">Milestone 2 — Submission Portal</strong>
+                                    <span class="badge-role instructor">Chờ nộp bài</span>
+                                </div>
+                                <p style="font-size:12px; color:var(--text-muted)">Hạn nộp: 15/10/2026 23:59 (Còn 4 ngày)</p>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="applyAdminTheme()" class="btn btn-secondary btn-sm" style="margin-top:auto">
+                            <i class="bi bi-arrow-repeat"></i> Chuyển sang xem quyền Quản trị viên (Admin)
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Sub-Page: Add User Form in Dashboard -->
+            <main class="content-body" id="dashboard-content-adduser" style="display:none">
+                <div class="page-header-row">
+                    <div class="page-header-text">
+                        <h1>Thêm Người dùng Mới</h1>
+                        <p>Khởi tạo tài khoản Quản trị viên, Giảng viên hoặc Sinh viên với đầy đủ thông tin.</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" onclick="showScreen('dashboard')" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-container-card">
+                    <form onsubmit="event.preventDefault(); alert('Đã thêm người dùng thành công (Demo)!'); showScreen('dashboard');">
+                        <div class="form-grid-2col">
+                            <div class="form-group-app col-full">
+                                <label>Vai trò trong hệ thống (*)</label>
+                                <select required>
+                                    <option value="1">1 — Quản trị viên (ADMIN)</option>
+                                    <option value="2">2 — Giảng viên (INSTRUCTOR)</option>
+                                    <option value="3" selected>3 — Sinh viên (STUDENT)</option>
+                                </select>
+                            </div>
+                            <div class="form-group-app">
+                                <label>Tên đăng nhập (*)</label>
+                                <input type="text" placeholder="VD: vynt, duynd..." required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Mật khẩu (*)</label>
+                                <input type="password" placeholder="Nhập mật khẩu..." required />
+                            </div>
+                            <div class="form-group-app col-full">
+                                <label>Họ và tên (*)</label>
+                                <input type="text" placeholder="Nguyễn Văn A..." required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Email (*)</label>
+                                <input type="email" placeholder="example@fpt.edu.vn..." required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Số điện thoại</label>
+                                <input type="text" placeholder="0987654321..." />
+                            </div>
+                        </div>
+                        <div class="form-footer-actions">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-floppy-fill"></i> Lưu tài khoản</button>
+                            <button type="button" onclick="showScreen('dashboard')" class="btn btn-secondary">Hủy bỏ</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+
+            <!-- Sub-Page: Update User Form in Dashboard -->
+            <main class="content-body" id="dashboard-content-updateuser" style="display:none">
+                <div class="page-header-row">
+                    <div style="display:flex; align-items:center; gap:16px">
+                        <div class="user-avatar-circle" id="demoEditAvatar" style="width:52px; height:52px; font-size:20px">U</div>
+                        <div class="page-header-text">
+                            <h1 id="demoEditTitle">Chỉnh sửa người dùng</h1>
+                            <p>Cập nhật vai trò, email và thông tin cá nhân của tài khoản.</p>
+                        </div>
+                    </div>
+                    <div class="page-header-actions">
+                        <button type="button" onclick="showScreen('dashboard')" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-container-card">
+                    <form onsubmit="event.preventDefault(); alert('Cập nhật thành công (Demo)!'); showScreen('dashboard');">
+                        <div class="form-grid-2col">
+                            <div class="form-group-app">
+                                <label>User ID</label>
+                                <input type="number" id="demoEditId" readonly />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Vai trò</label>
+                                <select id="demoEditRole">
+                                    <option value="1">1 — Quản trị viên (ADMIN)</option>
+                                    <option value="2">2 — Giảng viên (INSTRUCTOR)</option>
+                                    <option value="3">3 — Sinh viên (STUDENT)</option>
+                                </select>
+                            </div>
+                            <div class="form-group-app">
+                                <label>Tên đăng nhập</label>
+                                <input type="text" id="demoEditUsername" required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Họ và tên</label>
+                                <input type="text" id="demoEditFullname" required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Email</label>
+                                <input type="email" id="demoEditEmail" required />
+                            </div>
+                            <div class="form-group-app">
+                                <label>Số điện thoại</label>
+                                <input type="text" id="demoEditPhone" />
+                            </div>
+                        </div>
+                        <div class="form-footer-actions">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> Cập nhật thông tin</button>
+                            <button type="button" onclick="showScreen('dashboard')" class="btn btn-secondary">Hủy bỏ</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div id="deleteConfirmModal" class="modal-backdrop" onclick="if(event.target===this) closeDeleteModal();">
+    <div class="modal-dialog">
+        <div class="modal-icon-badge"><i class="bi bi-exclamation-triangle-fill"></i></div>
+        <h3 class="modal-title">Xác nhận xóa tài khoản</h3>
+        <p class="modal-desc">
+            Bạn có chắc chắn muốn xóa vĩnh viễn người dùng <strong id="deleteTargetName"></strong>? Thao tác này không thể hoàn tác.
+        </p>
+        <div class="modal-actions">
+            <button type="button" onclick="closeDeleteModal()" class="btn btn-secondary">Hủy bỏ</button>
+            <button type="button" onclick="alert('Đã xóa thành công (Demo)!'); closeDeleteModal();" class="btn btn-danger">
+                <i class="bi bi-trash3-fill"></i> Xác nhận xóa
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- App Controller Script -->
+<script src="assets/js/app.js"></script>
+
+<script>
+function showScreen(name, roleType) {
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-register').classList.remove('active');
+    document.getElementById('screen-dashboard').classList.remove('active');
+
+    const lbl = document.getElementById('lblScreen');
+    const role = document.getElementById('lblRole');
+
+    if (name === 'login') {
+        document.getElementById('screen-login').classList.add('active');
+        lbl.textContent = '1. Đăng nhập (Split-Screen Hero)';
+        role.textContent = 'Khách';
+        role.style.background = 'rgba(99, 102, 241, 0.2)';
+        role.style.color = '#a5b4fc';
+    } else if (name === 'register') {
+        document.getElementById('screen-register').classList.add('active');
+        lbl.textContent = '2. Đăng ký tài khoản mới';
+        role.textContent = 'Khách';
+        role.style.background = 'rgba(251, 191, 36, 0.2)';
+        role.style.color = 'var(--warning)';
+    } else if (name === 'dashboard') {
+        document.getElementById('screen-dashboard').classList.add('active');
+        document.getElementById('dashboard-content-adduser').style.display = 'none';
+        document.getElementById('dashboard-content-updateuser').style.display = 'none';
+
+        // Kiểm tra xem là Student hay Admin
+        const usernameInput = (document.getElementById('u1') ? document.getElementById('u1').value : '').trim().toLowerCase();
+        const isStudent = (roleType === 'STUDENT') || (usernameInput === 'duynd' || usernameInput === 'vynt' || usernameInput === 'khoana' || usernameInput === 'student');
+
+        if (isStudent) {
+            applyStudentTheme();
+            lbl.textContent = '3. Giao diện Sinh viên (Student Workspace)';
+            role.textContent = 'STUDENT';
+            role.style.background = 'rgba(16, 185, 129, 0.2)';
+            role.style.color = '#10b981';
+        } else {
+            applyAdminTheme();
+            lbl.textContent = '3. Quản lý Người dùng (Admin Dashboard)';
+            role.textContent = 'ADMIN';
+            role.style.background = 'rgba(99, 102, 241, 0.2)';
+            role.style.color = '#a5b4fc';
+        }
+    } else if (name === 'adduser') {
+        document.getElementById('screen-dashboard').classList.add('active');
+        document.getElementById('dashboard-content-users').style.display = 'none';
+        document.getElementById('dashboard-content-student').style.display = 'none';
+        document.getElementById('dashboard-content-adduser').style.display = 'block';
+        document.getElementById('dashboard-content-updateuser').style.display = 'none';
+        document.getElementById('topbarBreadcrumb').textContent = 'Thêm Người dùng';
+        lbl.textContent = '4. Thêm người dùng mới';
+        role.textContent = 'ADMIN';
+    } else if (name === 'updateuser') {
+        document.getElementById('screen-dashboard').classList.add('active');
+        document.getElementById('dashboard-content-users').style.display = 'none';
+        document.getElementById('dashboard-content-student').style.display = 'none';
+        document.getElementById('dashboard-content-adduser').style.display = 'none';
+        document.getElementById('dashboard-content-updateuser').style.display = 'block';
+        document.getElementById('topbarBreadcrumb').textContent = 'Chỉnh sửa Người dùng';
+        lbl.textContent = '5. Chỉnh sửa Người dùng';
+        role.textContent = 'ADMIN';
+    }
+}
+
+function applyAdminTheme() {
+    document.getElementById('sidebarRoleBadge').className = 'sidebar-role-indicator role-admin';
+    document.getElementById('sidebarRoleBadge').innerHTML = '<i class="bi bi-shield-lock-fill"></i> <span>QUẢN TRỊ VIÊN (ADMIN)</span>';
+    document.getElementById('sidebarAdminNav').style.display = 'flex';
+    document.getElementById('sidebarStudentNav').style.display = 'none';
+    document.getElementById('sidebarUserName').textContent = 'Quản Trị Viên';
+    document.getElementById('sidebarUserRole').textContent = '@admin';
+    document.getElementById('sidebarAvatar').textContent = 'A';
+    document.getElementById('dashboard-content-users').style.display = 'block';
+    document.getElementById('dashboard-content-student').style.display = 'none';
+    document.getElementById('topbarBreadcrumb').textContent = 'Quản lý Người dùng';
+}
+
+function applyStudentTheme() {
+    document.getElementById('sidebarRoleBadge').className = 'sidebar-role-indicator role-student';
+    document.getElementById('sidebarRoleBadge').innerHTML = '<i class="bi bi-person-workspace"></i> <span>SINH VIÊN (STUDENT)</span>';
+    document.getElementById('sidebarAdminNav').style.display = 'none';
+    document.getElementById('sidebarStudentNav').style.display = 'flex';
+    document.getElementById('sidebarUserName').textContent = 'Nguyễn Đức Duy';
+    document.getElementById('sidebarUserRole').textContent = '@duynd • SE180000';
+    document.getElementById('sidebarAvatar').textContent = 'D';
+    document.getElementById('dashboard-content-users').style.display = 'none';
+    document.getElementById('dashboard-content-student').style.display = 'block';
+    document.getElementById('topbarBreadcrumb').textContent = 'Phòng Gia Sư AI Tutor 24/7';
+}
+
+function openEditDemo(id, username, fullname, email, phone, roleId) {
+    document.getElementById('demoEditId').value = id;
+    document.getElementById('demoEditUsername').value = username;
+    document.getElementById('demoEditFullname').value = fullname;
+    document.getElementById('demoEditEmail').value = email;
+    document.getElementById('demoEditPhone').value = phone;
+    document.getElementById('demoEditRole').value = roleId;
+    document.getElementById('demoEditTitle').textContent = 'Chỉnh sửa: ' + username;
+    document.getElementById('demoEditAvatar').textContent = fullname.charAt(0).toUpperCase();
+    showScreen('updateuser');
+}
+</script>
+</body>
+</html>
