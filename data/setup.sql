@@ -1,4 +1,4 @@
-﻿USE master;
+USE master;
 GO
 
 -- 1. Cưỡng chế ngắt kết nối và Xóa Database cũ (nếu có) để làm sạch
