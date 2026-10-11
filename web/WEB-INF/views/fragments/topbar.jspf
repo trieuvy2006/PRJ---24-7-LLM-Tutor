@@ -1,0 +1,62 @@
+<%-- 
+    AITA — 24/7 LLM Tutor Platform
+    Fragment: topbar.jspf (Sticky Topbar, Global Search, Theme Switcher, Notifications & Logout)
+--%>
+<%@page pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<header class="app-topbar">
+    <div class="topbar-left">
+        <!-- Nút thu gọn / mở sidebar (Desktop & Mobile) -->
+        <button type="button" class="btn-sidebar-toggle" aria-label="Đóng mở thanh điều hướng" title="Thu gọn / Mở rộng Sidebar">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Breadcrumbs -->
+        <div class="breadcrumbs">
+            <a href="${pageContext.request.contextPath}/user">AITA</a>
+            <i class="bi bi-chevron-right" style="font-size:11px"></i>
+            <span>
+                <c:choose>
+                    <c:when test="${pageContext.request.servletPath eq '/add.jsp'}">Thêm người dùng</c:when>
+                    <c:when test="${pageContext.request.servletPath eq '/update.jsp'}">Chỉnh sửa người dùng</c:when>
+                    <c:otherwise>Quản lý Người dùng</c:otherwise>
+                </c:choose>
+            </span>
+        </div>
+    </div>
+
+    <!-- Ô tìm kiếm nhanh trên Topbar -->
+    <div class="topbar-search-wrapper">
+        <i class="bi bi-search topbar-search-icon"></i>
+        <input type="text" class="topbar-search-input" id="topbarSearch" 
+               placeholder="Tìm nhanh thành viên, mã lớp, email..." 
+               onkeyup="if(window.filterUserTable){var el=document.getElementById('tableSearchInput'); if(el){el.value=this.value; filterUserTable();}}" />
+    </div>
+
+    <!-- Khu vực nút công cụ bên phải Topbar -->
+    <div class="topbar-right">
+        <!-- AI Tutor Status Indicator -->
+        <div class="status-pill">
+            <span class="status-dot-pulse"></span>
+            <span>AI Tutor: Online</span>
+        </div>
+
+        <!-- Chuông thông báo -->
+        <button type="button" class="icon-action-btn" aria-label="Thông báo hệ thống" title="Thông báo mới">
+            <i class="bi bi-bell"></i>
+            <span class="icon-badge"></span>
+        </button>
+
+        <!-- Nút chuyển đổi Dark Mode / Light Mode -->
+        <button type="button" class="icon-action-btn btn-theme-toggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">
+            <i class="bi bi-sun-fill"></i>
+        </button>
+
+        <!-- Nút Đăng xuất an toàn -->
+        <a href="${pageContext.request.contextPath}/logout" class="btn-logout" title="Đăng xuất khỏi hệ thống">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Đăng xuất</span>
+        </a>
+    </div>
+</header>

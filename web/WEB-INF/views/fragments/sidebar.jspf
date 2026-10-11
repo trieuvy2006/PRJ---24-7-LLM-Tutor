@@ -1,0 +1,148 @@
+<%-- 
+    AITA — 24/7 LLM Tutor Platform
+    Fragment: sidebar.jspf (Role-Aware Collapsible Sidebar Navigation)
+--%>
+<%@page pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<aside class="app-sidebar">
+    <!-- Header Brand -->
+    <div class="sidebar-header">
+        <a href="${pageContext.request.contextPath}/user" class="brand-link">
+            <div class="brand-logo-badge">A</div>
+            <div class="brand-text">
+                <span class="brand-title">AITA</span>
+                <span class="brand-subtitle">24/7 LLM Tutor Platform</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Role Indicator Badge -->
+    <c:choose>
+        <c:when test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">
+            <div class="sidebar-role-indicator role-admin">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>QUẢN TRỊ VIÊN (ADMIN)</span>
+            </div>
+        </c:when>
+        <c:when test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">
+            <div class="sidebar-role-indicator role-instructor">
+                <i class="bi bi-mortarboard-fill"></i>
+                <span>GIẢNG VIÊN (INSTRUCTOR)</span>
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="sidebar-role-indicator role-student">
+                <i class="bi bi-person-workspace"></i>
+                <span>SINH VIÊN (STUDENT)</span>
+            </div>
+        </c:otherwise>
+    </c:choose>
+
+    <!-- Navigation Menu (Phân quyền theo Role) -->
+    <nav class="sidebar-nav">
+        <!-- ── MENU CHO ADMIN ── -->
+        <c:if test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">
+            <div class="nav-section-title">Hệ Thống Quản Trị</div>
+            <a href="${pageContext.request.contextPath}/user" class="nav-link ${pageContext.request.servletPath eq '/user.jsp' or pageContext.request.servletPath eq '/add.jsp' or pageContext.request.servletPath eq '/update.jsp' ? 'active' : ''}">
+                <i class="bi bi-people-fill"></i>
+                <span>Quản lý Người dùng</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-book-half"></i>
+                <span>Môn học & Khóa học</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-cpu-fill"></i>
+                <span>Cấu hình AI Agent</span>
+                <span class="nav-badge">GPT/LLM</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-journal-text"></i>
+                <span>Nhật ký Hệ thống</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-sliders"></i>
+                <span>Cài đặt Nền tảng</span>
+            </a>
+        </c:if>
+
+        <!-- ── MENU CHO INSTRUCTOR ── -->
+        <c:if test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">
+            <div class="nav-section-title">Giảng Dạy & Giám Sát</div>
+            <a href="#" class="nav-link">
+                <i class="bi bi-easel-fill"></i>
+                <span>Lớp học phụ trách</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-clipboard-check-fill"></i>
+                <span>Ngân hàng Bài tập</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-chat-left-dots-fill"></i>
+                <span>Giám sát Hỏi đáp AI</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Tiến độ Học viên</span>
+            </a>
+            <a href="${pageContext.request.contextPath}/user" class="nav-link ${pageContext.request.servletPath eq '/user.jsp' ? 'active' : ''}">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Danh bạ Thành viên</span>
+            </a>
+        </c:if>
+
+        <!-- ── MENU CHO STUDENT (HOẶC MẶC ĐỊNH) ── -->
+        <c:if test="${empty sessionScope.role or sessionScope.role eq 'STUDENT' or sessionScope.currentUser.role_id == 3}">
+            <div class="nav-section-title">Học Tập 24/7</div>
+            <a href="#" class="nav-link active">
+                <i class="bi bi-robot"></i>
+                <span>AI Tutor Chatbot</span>
+                <span class="nav-badge" style="background:#10b981">LIVE</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-journal-code"></i>
+                <span>Bài tập & Milestones</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-clock-history"></i>
+                <span>Lịch sử Hỏi đáp</span>
+            </a>
+            <a href="#" class="nav-link">
+                <i class="bi bi-folder2-open"></i>
+                <span>Tài liệu Khóa học</span>
+            </a>
+            <a href="${pageContext.request.contextPath}/user" class="nav-link ${pageContext.request.servletPath eq '/user.jsp' ? 'active' : ''}">
+                <i class="bi bi-people"></i>
+                <span>Cộng đồng Học tập</span>
+            </a>
+        </c:if>
+    </nav>
+
+    <!-- Footer Profile Widget -->
+    <div class="sidebar-footer">
+        <div class="user-profile-widget">
+            <div class="user-avatar-circle">
+                <c:choose>
+                    <c:when test="${not empty sessionScope.currentUser}">
+                        ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
+                    </c:when>
+                    <c:otherwise>A</c:otherwise>
+                </c:choose>
+            </div>
+            <div class="user-info-text">
+                <div class="user-display-name">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.currentUser}">
+                            ${sessionScope.currentUser.full_name}
+                        </c:when>
+                        <c:otherwise>Quản trị viên</c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="user-role-name">
+                    @<c:out value="${sessionScope.currentUser.username != null ? sessionScope.currentUser.username : 'admin'}" />
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>

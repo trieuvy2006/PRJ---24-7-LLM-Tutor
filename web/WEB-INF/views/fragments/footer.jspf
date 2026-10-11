@@ -1,0 +1,30 @@
+<%-- 
+    AITA — 24/7 LLM Tutor Platform
+    Fragment: footer.jspf (Modal Dialogs & JavaScript Bundle Include)
+--%>
+<%@page pageEncoding="UTF-8"%>
+
+<!-- Modal xác nhận xóa người dùng (Thay thế window.confirm thô sơ) -->
+<div id="deleteConfirmModal" class="modal-backdrop" onclick="if(event.target===this) closeDeleteModal();">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalDeleteTitle">
+        <div class="modal-icon-badge">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 id="modalDeleteTitle" class="modal-title">Xác nhận xóa tài khoản</h3>
+        <p class="modal-desc">
+            Bạn có chắc chắn muốn xóa vĩnh viễn người dùng <strong id="deleteTargetName" style="color:var(--text-main)"></strong>? 
+            Thao tác này sẽ xóa mọi dữ liệu liên kết và không thể hoàn tác.
+        </p>
+        <div class="modal-actions">
+            <button type="button" onclick="closeDeleteModal()" class="btn btn-secondary">
+                Hủy bỏ
+            </button>
+            <button type="button" id="btnConfirmDelete" onclick="executeDelete()" class="btn btn-danger">
+                <i class="bi bi-trash3-fill"></i> Xác nhận xóa
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts Controller -->
+<script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
