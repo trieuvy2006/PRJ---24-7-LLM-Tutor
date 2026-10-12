@@ -61,16 +61,29 @@ public class UpdateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login?error=access_denied");
+            return;
+        }
+
         String id_raw = request.getParameter("user_id");
         UserDAO udb = new UserDAO();
 
         try {
             int id = Integer.parseInt(id_raw);
+            // Nếu không phải admin và không phải chính mình thì chặn
+            if (!currentUser.isAdmin() && currentUser.getUser_id() != id) {
+                response.sendRedirect(request.getContextPath() + "/profile?error=access_denied");
+                return;
+            }
             User u = udb.getUserById(id);
             request.setAttribute("user", u);
             request.getRequestDispatcher("/update.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             System.out.println(e);
+            response.sendRedirect(request.getContextPath() + "/user");
         }
     }
 
@@ -85,6 +98,13 @@ public class UpdateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login?error=access_denied");
+            return;
+        }
+
         String user_id_raw = request.getParameter("user_id");
         String role_id_raw = request.getParameter("role_id");
         String username = request.getParameter("username");
@@ -95,12 +115,28 @@ public class UpdateServlet extends HttpServlet {
 
         try {
             int user_id = Integer.parseInt(user_id_raw);
+            // Nếu không phải admin và không phải chính mình thì chặn
+            if (!currentUser.isAdmin() && currentUser.getUser_id() != user_id) {
+                response.sendRedirect(request.getContextPath() + "/profile?error=access_denied");
+                return;
+            }
+
             int role_id = Integer.parseInt(role_id_raw);
+            // Người dùng thường không được tự phong quyền admin
+            if (!currentUser.isAdmin()) {
+                role_id = currentUser.getRole_id();
+            }
+
             User u = new User(user_id, role_id, username, null, full_name, email, phone);
             udb.update(u);
-            response.sendRedirect("user");
+            if (currentUser.isAdmin()) {
+                response.sendRedirect("user");
+            } else {
+                response.sendRedirect("profile?message=profile_updated");
+            }
         } catch (NumberFormatException e) {
             System.out.println(e);
+            response.sendRedirect(request.getContextPath() + "/user");
         }
     }
 

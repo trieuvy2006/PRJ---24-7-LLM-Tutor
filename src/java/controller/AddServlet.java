@@ -36,6 +36,13 @@ public class AddServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+        if (currentUser == null || !currentUser.isAdmin()) {
+            response.sendRedirect(request.getContextPath() + "/login?error=access_denied");
+            return;
+        }
+
         String role_id_raw = request.getParameter("role_id");
         String username = request.getParameter("username");
         String password_hash = request.getParameter("password_hash");

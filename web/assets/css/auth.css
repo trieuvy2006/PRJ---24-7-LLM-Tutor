@@ -553,10 +553,18 @@ a:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes alertShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
 .alert-error {
-  background: var(--danger-bg);
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  color: var(--danger);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  font-weight: 500;
+  animation: alertShake 0.35s ease;
 }
 
 .alert-success {

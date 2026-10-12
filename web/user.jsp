@@ -1,5 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- Kiểm tra bảo vệ quyền truy cập: Chỉ Admin mới được vào trang này --%>
+<c:if test="${empty sessionScope.currentUser or (!sessionScope.currentUser.isAdmin() and sessionScope.currentUser.role_id != 1)}">
+    <c:redirect url="/login?error=access_denied"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -25,7 +29,7 @@
                     <p>Xem danh sách, tìm kiếm và phân quyền các tài khoản Admin, Giảng viên và Sinh viên.</p>
                 </div>
                 <div class="page-header-actions">
-                    <c:if test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1 or empty sessionScope.role}">
+                    <c:if test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">
                         <a href="add.jsp" id="btn-add-user" class="btn btn-primary">
                             <i class="bi bi-person-plus-fill"></i>
                             <span>+ Thêm người dùng mới</span>

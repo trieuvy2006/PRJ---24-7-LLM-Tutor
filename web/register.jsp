@@ -97,8 +97,8 @@
                 </div>
             </c:if>
 
-            <!-- FORM ĐĂNG KÝ (Giữ nguyên chính xác action, method, name của input) -->
-            <form id="register-form" action="register" method="post">
+            <!-- FORM ĐĂNG KÝ -->
+            <form id="register-form" action="${pageContext.request.contextPath}/register" method="post">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
                     <div class="form-group">
                         <label class="form-label" for="reg-username">Tên đăng nhập (*)</label>
@@ -186,7 +186,7 @@
 
             <div class="auth-switch">
                 Đã có tài khoản trên AITA?
-                <a href="login">Đăng nhập ngay →</a>
+                <a href="${pageContext.request.contextPath}/login">Đăng nhập ngay →</a>
             </div>
         </div>
     </div>

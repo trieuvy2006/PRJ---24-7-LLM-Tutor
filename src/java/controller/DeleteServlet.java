@@ -60,6 +60,13 @@ public class DeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        model.User currentUser = (session != null) ? (model.User) session.getAttribute("currentUser") : null;
+        if (currentUser == null || !currentUser.isAdmin()) {
+            response.sendRedirect(request.getContextPath() + "/login?error=access_denied");
+            return;
+        }
+
         String id_raw = request.getParameter("user_id");
         UserDAO dao = new UserDAO();
 

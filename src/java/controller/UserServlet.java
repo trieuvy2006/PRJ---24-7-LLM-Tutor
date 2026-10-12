@@ -61,11 +61,25 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        User currentUser = (session != null) ? (User) session.getAttribute("currentUser") : null;
+
+        // Nếu chưa đăng nhập -> chuyển hướng về trang đăng nhập
+        if (currentUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login?error=access_denied");
+            return;
+        }
+
+        // Nếu không phải Quản trị viên (Admin) -> từ chối truy cập
+        if (!currentUser.isAdmin()) {
+            response.sendRedirect(request.getContextPath() + "/profile?error=admin_only");
+            return;
+        }
+
         UserDAO c = new UserDAO();
         List<User> list = c.getAll();
         request.setAttribute("data", list);
         request.getRequestDispatcher("/user.jsp").forward(request, response);
-
     }
 
     /**

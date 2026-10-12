@@ -79,10 +79,18 @@ public class AuthController extends HttpServlet {
             response.addCookie(cUser);
             response.addCookie(cPass);
 
-            // Chuyển hướng tới trang quản lý người dùng sau khi đăng nhập thành công
-            response.sendRedirect(request.getContextPath() + "/user");
+            // Phân luồng điều hướng: Admin vào trang quản trị /user, Sinh viên & Giảng viên vào /profile
+            if (user.isAdmin()) {
+                response.sendRedirect(request.getContextPath() + "/user");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/profile");
+            }
         } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
+            String errorMsg = e.getMessage();
+            if (errorMsg == null || errorMsg.trim().isEmpty()) {
+                errorMsg = "Tên đăng nhập hoặc mật khẩu không chính xác. Vui lòng thử lại!";
+            }
+            request.setAttribute("error", errorMsg);
             request.setAttribute("username", username);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
@@ -112,9 +120,14 @@ public class AuthController extends HttpServlet {
             session.setAttribute("currentUser", newUser);
             session.setAttribute("role", newUser.getRole_name());
 
-            response.sendRedirect(request.getContextPath() + "/user");
+            // Tài khoản đăng ký mới là Sinh viên -> chuyển hướng về /profile
+            response.sendRedirect(request.getContextPath() + "/profile");
         } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
+            String errorMsg = e.getMessage();
+            if (errorMsg == null || errorMsg.trim().isEmpty()) {
+                errorMsg = "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin!";
+            }
+            request.setAttribute("error", errorMsg);
             request.setAttribute("username", username);
             request.setAttribute("full_name", fullName);
             request.setAttribute("email", email);

@@ -96,11 +96,25 @@
                 <p class="auth-card-sub">Chào mừng trở lại! Vui lòng nhập thông tin tài khoản.</p>
             </div>
 
-            <!-- Thông báo Lỗi -->
-            <c:if test="${not empty error}">
-                <div class="alert-box alert-error">
-                    <i class="bi bi-exclamation-octagon-fill" style="font-size:16px; flex-shrink:0"></i>
-                    <div>${error}</div>
+            <!-- Thông báo Lỗi Đăng Nhập -->
+            <c:if test="${not empty error or not empty param.error}">
+                <div class="alert-box alert-error" id="login-error-alert" role="alert">
+                    <i class="bi bi-exclamation-octagon-fill" style="font-size:18px; flex-shrink:0"></i>
+                    <div>
+                        <c:choose>
+                            <c:when test="${not empty error}">${error}</c:when>
+                            <c:when test="${param.error eq 'access_denied'}">
+                                <strong>Từ chối truy cập:</strong> Chức năng này chỉ dành riêng cho Quản trị viên (Admin). Vui lòng đăng nhập với tài khoản Admin.
+                            </c:when>
+                            <c:when test="${param.error eq 'admin_only'}">
+                                <strong>Thông báo:</strong> Tài khoản của bạn không có quyền truy cập trang quản lý người dùng.
+                            </c:when>
+                            <c:when test="${param.error eq 'invalid'}">
+                                <strong>Đăng nhập thất bại:</strong> Tên đăng nhập hoặc mật khẩu không chính xác!
+                            </c:when>
+                            <c:otherwise>${param.error}</c:otherwise>
+                        </c:choose>
+                    </div>
                 </div>
             </c:if>
 
@@ -112,8 +126,8 @@
                 </div>
             </c:if>
 
-            <!-- FORM ĐĂNG NHẬP (Giữ nguyên chính xác action, method, name của input) -->
-            <form id="login-form" action="login" method="post">
+            <!-- FORM ĐĂNG NHẬP -->
+            <form id="login-form" action="${pageContext.request.contextPath}/login" method="post">
                 <div class="form-group">
                     <label class="form-label" for="username">Tên đăng nhập</label>
                     <div class="input-wrapper">
@@ -158,7 +172,7 @@
 
             <div class="auth-switch">
                 Chưa có tài khoản học viên?
-                <a href="register">Tạo tài khoản ngay →</a>
+                <a href="${pageContext.request.contextPath}/register">Tạo tài khoản ngay →</a>
             </div>
         </div>
     </div>

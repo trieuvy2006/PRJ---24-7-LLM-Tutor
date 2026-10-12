@@ -8,7 +8,7 @@
 <aside class="app-sidebar">
     <!-- Header Brand -->
     <div class="sidebar-header">
-        <a href="${pageContext.request.contextPath}/user" class="brand-link">
+        <a href="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1 ? pageContext.request.contextPath.concat('/user') : '#'}" class="brand-link">
             <div class="brand-logo-badge">A</div>
             <div class="brand-text">
                 <span class="brand-title">AITA</span>
@@ -86,7 +86,7 @@
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Tiến độ Học viên</span>
             </a>
-            <a href="${pageContext.request.contextPath}/user" class="nav-link ${pageContext.request.servletPath eq '/user.jsp' ? 'active' : ''}">
+            <a href="#" class="nav-link" onclick="alert('Chức năng Danh bạ Thành viên đang được hoàn thiện!'); return false;">
                 <i class="bi bi-person-lines-fill"></i>
                 <span>Danh bạ Thành viên</span>
             </a>
@@ -112,7 +112,7 @@
                 <i class="bi bi-folder2-open"></i>
                 <span>Tài liệu Khóa học</span>
             </a>
-            <a href="${pageContext.request.contextPath}/user" class="nav-link ${pageContext.request.servletPath eq '/user.jsp' ? 'active' : ''}">
+            <a href="#" class="nav-link" onclick="alert('Tính năng Cộng đồng Học tập đang được phát triển!'); return false;">
                 <i class="bi bi-people"></i>
                 <span>Cộng đồng Học tập</span>
             </a>

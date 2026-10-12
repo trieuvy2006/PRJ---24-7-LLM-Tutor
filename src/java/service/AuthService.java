@@ -128,13 +128,13 @@ public class AuthService {
         username = username.trim();
         User user = userDAO.getUserByUsername(username);
         if (user == null) {
-            throw new IllegalArgumentException("Tài khoản '" + username + "' không tồn tại trong hệ thống.");
+            throw new IllegalArgumentException("Tên đăng nhập hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại!");
         }
 
         // Kiểm tra mật khẩu (hỗ trợ SHA-256 và dữ liệu mẫu)
         boolean isMatch = PasswordUtil.verifyPassword(password, user.getPassword_hash());
         if (!isMatch) {
-            throw new IllegalArgumentException("Mật khẩu không chính xác.");
+            throw new IllegalArgumentException("Tên đăng nhập hoặc mật khẩu không chính xác. Vui lòng kiểm tra lại!");
         }
 
         return user;
