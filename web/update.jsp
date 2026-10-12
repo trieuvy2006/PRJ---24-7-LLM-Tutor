@@ -1,5 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${empty sessionScope.currentUser or (!sessionScope.currentUser.isAdmin() and sessionScope.currentUser.role_id != 1)}">
+    <c:redirect url="/profile"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="vi">
 <head>

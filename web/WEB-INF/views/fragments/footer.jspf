@@ -4,7 +4,7 @@
 --%>
 <%@page pageEncoding="UTF-8"%>
 
-<!-- Modal xác nhận xóa người dùng (Thay thế window.confirm thô sơ) -->
+<!-- Modal xác nhận xóa người dùng -->
 <div id="deleteConfirmModal" class="modal-backdrop" onclick="if(event.target===this) closeDeleteModal();">
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalDeleteTitle">
         <div class="modal-icon-badge">
@@ -21,6 +21,121 @@
             </button>
             <button type="button" id="btnConfirmDelete" onclick="executeDelete()" class="btn btn-danger">
                 <i class="bi bi-trash3-fill"></i> Xác nhận xóa
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cài đặt hệ thống (Settings Modal UI) -->
+<div id="settingsModal" class="modal-backdrop" onclick="if(event.target===this) closeSettingsModal();">
+    <div class="modal-dialog modal-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="modalSettingsTitle">
+        <div class="modal-settings-header">
+            <div style="display:flex; align-items:center; gap:12px">
+                <div class="settings-header-icon">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <div>
+                    <h3 id="modalSettingsTitle" class="modal-title" style="margin:0; text-align:left">Cài đặt Hệ thống</h3>
+                    <p style="margin:2px 0 0; font-size:12px; color:var(--text-subtle)">Tùy chỉnh giao diện, mô hình AI và thông báo nền tảng AITA.</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" onclick="closeSettingsModal()" aria-label="Đóng">&times;</button>
+        </div>
+
+        <div class="modal-settings-body">
+            <!-- Mục 1: Giao diện -->
+            <div class="settings-section">
+                <h4 class="settings-sec-title"><i class="bi bi-palette2"></i> Giao diện & Hiển thị</h4>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Chế độ giao diện</div>
+                        <div class="settings-sublabel">Chuyển đổi giữa chế độ nền tối (Dark) hoặc sáng (Light)</div>
+                    </div>
+                    <div>
+                        <select class="settings-select" id="settingsThemeSelect" onchange="window.setThemeFromSelect(this.value)">
+                            <option value="dark">Chế độ tối (Dark Mode)</option>
+                            <option value="light">Chế độ sáng (Light Mode)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Thu gọn thanh điều hướng bên trái</div>
+                        <div class="settings-sublabel">Tối đa hóa không gian đọc code và hỏi đáp AI</div>
+                    </div>
+                    <div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" id="settingsSidebarCollapse" onchange="window.setSidebarFromSwitch(this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mục 2: Trợ lý AI Tutor -->
+            <div class="settings-section">
+                <h4 class="settings-sec-title"><i class="bi bi-robot"></i> Cấu hình Trợ lý AI Tutor</h4>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Mô hình AI mặc định</div>
+                        <div class="settings-sublabel">Lựa chọn LLM Engine phục vụ trả lời hỏi đáp</div>
+                    </div>
+                    <div>
+                        <select class="settings-select">
+                            <option value="gpt4o">OpenAI GPT-4o Education (Khuyên dùng)</option>
+                            <option value="gemini">Google Gemini 1.5 Pro</option>
+                            <option value="claude">Anthropic Claude 3.5 Sonnet</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Phương pháp sư phạm Socratic</div>
+                        <div class="settings-sublabel">AI sẽ đặt câu hỏi gợi mở thay vì đưa trực tiếp đáp án code</div>
+                    </div>
+                    <div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mục 3: Thông báo -->
+            <div class="settings-section">
+                <h4 class="settings-sec-title"><i class="bi bi-bell-fill"></i> Thông báo & Nhắc nhở</h4>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Âm thanh khi AI trả lời xong</div>
+                        <div class="settings-sublabel">Phát tiếng chuông nhẹ khi hoàn thành việc sinh mã code</div>
+                    </div>
+                    <div>
+                        <label class="switch-toggle">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div>
+                        <div class="settings-label">Ngôn ngữ giao diện</div>
+                        <div class="settings-sublabel">Ngôn ngữ hiển thị trên toàn hệ thống</div>
+                    </div>
+                    <div>
+                        <select class="settings-select">
+                            <option value="vi">Tiếng Việt (Mặc định)</option>
+                            <option value="en">English (US)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-settings-footer">
+            <button type="button" onclick="closeSettingsModal()" class="btn btn-secondary">Đóng</button>
+            <button type="button" onclick="saveSettingsMock()" class="btn btn-primary">
+                <i class="bi bi-check2"></i> Lưu cài đặt
             </button>
         </div>
     </div>

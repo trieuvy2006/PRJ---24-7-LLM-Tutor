@@ -18,9 +18,12 @@
             <i class="bi bi-chevron-right" style="font-size:11px"></i>
             <span>
                 <c:choose>
+                    <c:when test="${pageContext.request.servletPath eq '/chat.jsp'}">AI Tutor Chatbot 24/7</c:when>
+                    <c:when test="${pageContext.request.servletPath eq '/classes.jsp'}">Lớp học phụ trách</c:when>
+                    <c:when test="${pageContext.request.servletPath eq '/profile.jsp'}">Hồ sơ cá nhân & Tài khoản</c:when>
                     <c:when test="${pageContext.request.servletPath eq '/add.jsp'}">Thêm người dùng</c:when>
                     <c:when test="${pageContext.request.servletPath eq '/update.jsp'}">Chỉnh sửa người dùng</c:when>
-                    <c:otherwise>Quản lý Người dùng</c:otherwise>
+                    <c:otherwise>Quản trị Hệ thống</c:otherwise>
                 </c:choose>
             </span>
         </div>
@@ -53,10 +56,105 @@
             <i class="bi bi-sun-fill"></i>
         </button>
 
-        <!-- Nút Đăng xuất an toàn -->
-        <a href="${pageContext.request.contextPath}/logout" class="btn-logout" title="Đăng xuất khỏi hệ thống">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Đăng xuất</span>
-        </a>
+        <!-- Nút Tài Khoản & Menu Thả Xuống (Hover hoặc Click) -->
+        <div class="topbar-user-menu-wrapper" id="topbarUserMenuWrapper">
+            <button type="button" class="btn-topbar-user" id="btnTopbarUserToggle" aria-haspopup="true" aria-expanded="false" title="Nhấp hoặc rê chuột để mở tùy chọn tài khoản">
+                <div class="topbar-avatar-circle">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.currentUser}">
+                            ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
+                        </c:when>
+                        <c:otherwise>U</c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="topbar-user-text">
+                    <span class="topbar-user-name">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.currentUser}">
+                                ${sessionScope.currentUser.full_name}
+                            </c:when>
+                            <c:otherwise>Người dùng</c:otherwise>
+                        </c:choose>
+                    </span>
+                    <span class="topbar-user-role">
+                        <c:choose>
+                            <c:when test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">Quản trị viên</c:when>
+                            <c:when test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">Giảng viên</c:when>
+                            <c:otherwise>Sinh viên</c:otherwise>
+                        </c:choose>
+                    </span>
+                </div>
+                <i class="bi bi-chevron-down topbar-chevron"></i>
+            </button>
+
+            <!-- Dropdown Menu Tài khoản -->
+            <div class="topbar-user-dropdown" id="topbarUserDropdown">
+                <div class="dropdown-user-header">
+                    <div class="dropdown-avatar">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.currentUser}">
+                                ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
+                            </c:when>
+                            <c:otherwise>U</c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="dropdown-info">
+                        <div class="dropdown-name">
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.currentUser}">
+                                    ${sessionScope.currentUser.full_name}
+                                </c:when>
+                                <c:otherwise>Người dùng</c:otherwise>
+                            </c:choose>
+                        </div>
+                        <div class="dropdown-email">
+                            <c:out value="${sessionScope.currentUser.email != null ? sessionScope.currentUser.email : 'user@aita.edu.vn'}" />
+                        </div>
+                        <span class="dropdown-role-badge">
+                            <c:choose>
+                                <c:when test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">Quản trị viên</c:when>
+                                <c:when test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">Giảng viên</c:when>
+                                <c:otherwise>Sinh viên</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <div class="dropdown-menu-list">
+                    <!-- Quản lý tài khoản (Đổi SĐT, email, mật khẩu) -->
+                    <a href="${pageContext.request.contextPath}/profile" class="dropdown-item">
+                        <i class="bi bi-person-gear"></i>
+                        <div class="item-text">
+                            <strong>Quản lý tài khoản</strong>
+                            <span>Đổi SĐT, email, mật khẩu</span>
+                        </div>
+                    </a>
+
+                    <!-- Cài đặt (Mở modal cài đặt) -->
+                    <button type="button" class="dropdown-item" id="btnTopbarSettings">
+                        <i class="bi bi-gear-fill"></i>
+                        <div class="item-text">
+                            <strong>Cài đặt hệ thống</strong>
+                            <span>Tùy chỉnh nền tảng & AI</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <div class="dropdown-menu-list">
+                    <!-- Đăng xuất -->
+                    <a href="${pageContext.request.contextPath}/logout" class="dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <div class="item-text">
+                            <strong>Đăng xuất</strong>
+                            <span>Thoát khỏi phiên làm việc</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </header>

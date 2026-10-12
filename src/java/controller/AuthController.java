@@ -79,11 +79,16 @@ public class AuthController extends HttpServlet {
             response.addCookie(cUser);
             response.addCookie(cPass);
 
-            // Phân luồng điều hướng: Admin vào trang quản trị /user, Sinh viên & Giảng viên vào /profile
+            // Phân luồng điều hướng theo vai trò thực tế:
+            // - Quản trị viên (Admin) -> Quản trị người dùng /user
+            // - Giảng viên (Instructor) -> Danh sách lớp học phụ trách /classes
+            // - Sinh viên (Student) -> Giao diện AI Tutor Chatbot 24/7 /chat
             if (user.isAdmin()) {
                 response.sendRedirect(request.getContextPath() + "/user");
+            } else if (user.isInstructor()) {
+                response.sendRedirect(request.getContextPath() + "/classes");
             } else {
-                response.sendRedirect(request.getContextPath() + "/profile");
+                response.sendRedirect(request.getContextPath() + "/chat");
             }
         } catch (Exception e) {
             String errorMsg = e.getMessage();
@@ -120,8 +125,8 @@ public class AuthController extends HttpServlet {
             session.setAttribute("currentUser", newUser);
             session.setAttribute("role", newUser.getRole_name());
 
-            // Tài khoản đăng ký mới là Sinh viên -> chuyển hướng về /profile
-            response.sendRedirect(request.getContextPath() + "/profile");
+            // Tài khoản đăng ký mới là Sinh viên -> chuyển hướng về giao diện Chatbot AI /chat
+            response.sendRedirect(request.getContextPath() + "/chat");
         } catch (Exception e) {
             String errorMsg = e.getMessage();
             if (errorMsg == null || errorMsg.trim().isEmpty()) {

@@ -1,6 +1,6 @@
 <%-- 
     AITA — 24/7 LLM Tutor Platform
-    Fragment: sidebar.jspf (Role-Aware Collapsible Sidebar Navigation)
+    Fragment: sidebar.jspf (Role-Aware Collapsible Sidebar Navigation & User Account Popover)
 --%>
 <%@page pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -8,7 +8,7 @@
 <aside class="app-sidebar">
     <!-- Header Brand -->
     <div class="sidebar-header">
-        <a href="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1 ? pageContext.request.contextPath.concat('/user') : '#'}" class="brand-link">
+        <a href="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1 ? pageContext.request.contextPath.concat('/user') : (sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2 ? pageContext.request.contextPath.concat('/classes') : pageContext.request.contextPath.concat('/chat'))}" class="brand-link">
             <div class="brand-logo-badge">A</div>
             <div class="brand-text">
                 <span class="brand-title">AITA</span>
@@ -48,20 +48,16 @@
                 <i class="bi bi-people-fill"></i>
                 <span>Quản lý Người dùng</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="${pageContext.request.contextPath}/classes" class="nav-link ${pageContext.request.servletPath eq '/classes.jsp' ? 'active' : ''}">
                 <i class="bi bi-book-half"></i>
-                <span>Môn học & Khóa học</span>
+                <span>Môn học & Lớp học</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
                 <i class="bi bi-cpu-fill"></i>
-                <span>Cấu hình AI Agent</span>
+                <span>AI Tutor Platform</span>
                 <span class="nav-badge">GPT/LLM</span>
             </a>
-            <a href="#" class="nav-link">
-                <i class="bi bi-journal-text"></i>
-                <span>Nhật ký Hệ thống</span>
-            </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="if(window.openSettingsModal){openSettingsModal();} return false;">
                 <i class="bi bi-sliders"></i>
                 <span>Cài đặt Nền tảng</span>
             </a>
@@ -70,77 +66,145 @@
         <!-- ── MENU CHO INSTRUCTOR ── -->
         <c:if test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">
             <div class="nav-section-title">Giảng Dạy & Giám Sát</div>
-            <a href="#" class="nav-link">
+            <a href="${pageContext.request.contextPath}/classes" class="nav-link ${pageContext.request.servletPath eq '/classes.jsp' ? 'active' : ''}">
                 <i class="bi bi-easel-fill"></i>
                 <span>Lớp học phụ trách</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="alert('Ngân hàng Bài tập đang được mở theo học kỳ!'); return false;">
                 <i class="bi bi-clipboard-check-fill"></i>
                 <span>Ngân hàng Bài tập</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
+                <i class="bi bi-robot"></i>
+                <span>Thử nghiệm AI Tutor</span>
+            </a>
+            <a href="#" class="nav-link" onclick="alert('Tính năng Giám sát Hỏi đáp AI đang kết nối dữ liệu lớp!'); return false;">
                 <i class="bi bi-chat-left-dots-fill"></i>
                 <span>Giám sát Hỏi đáp AI</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="alert('Báo cáo Tiến độ Học viên đang cập nhật theo tuần!'); return false;">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Tiến độ Học viên</span>
-            </a>
-            <a href="#" class="nav-link" onclick="alert('Chức năng Danh bạ Thành viên đang được hoàn thiện!'); return false;">
-                <i class="bi bi-person-lines-fill"></i>
-                <span>Danh bạ Thành viên</span>
             </a>
         </c:if>
 
         <!-- ── MENU CHO STUDENT (HOẶC MẶC ĐỊNH) ── -->
         <c:if test="${empty sessionScope.role or sessionScope.role eq 'STUDENT' or sessionScope.currentUser.role_id == 3}">
             <div class="nav-section-title">Học Tập 24/7</div>
-            <a href="#" class="nav-link active">
+            <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
                 <i class="bi bi-robot"></i>
                 <span>AI Tutor Chatbot</span>
                 <span class="nav-badge" style="background:#10b981">LIVE</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="alert('Mục Bài tập & Milestones sẽ mở theo lịch trình tuần học.'); return false;">
                 <i class="bi bi-journal-code"></i>
                 <span>Bài tập & Milestones</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="alert('Lịch sử các phiên hỏi đáp đang được lưu trữ an toàn.'); return false;">
                 <i class="bi bi-clock-history"></i>
                 <span>Lịch sử Hỏi đáp</span>
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" onclick="alert('Tài liệu môn học Java Web & CSDL đang có sẵn trong thư viện.'); return false;">
                 <i class="bi bi-folder2-open"></i>
                 <span>Tài liệu Khóa học</span>
-            </a>
-            <a href="#" class="nav-link" onclick="alert('Tính năng Cộng đồng Học tập đang được phát triển!'); return false;">
-                <i class="bi bi-people"></i>
-                <span>Cộng đồng Học tập</span>
             </a>
         </c:if>
     </nav>
 
-    <!-- Footer Profile Widget -->
+    <!-- Footer Profile Widget & Popover Menu -->
     <div class="sidebar-footer">
-        <div class="user-profile-widget">
-            <div class="user-avatar-circle">
-                <c:choose>
-                    <c:when test="${not empty sessionScope.currentUser}">
-                        ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
-                    </c:when>
-                    <c:otherwise>A</c:otherwise>
-                </c:choose>
-            </div>
-            <div class="user-info-text">
-                <div class="user-display-name">
+        <div class="sidebar-user-container">
+            <button type="button" class="user-profile-widget" id="btnUserMenuToggle" aria-haspopup="true" aria-expanded="false" title="Nhấp hoặc rê chuột để mở tùy chọn tài khoản">
+                <div class="user-avatar-circle">
                     <c:choose>
                         <c:when test="${not empty sessionScope.currentUser}">
-                            ${sessionScope.currentUser.full_name}
+                            ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
                         </c:when>
-                        <c:otherwise>Quản trị viên</c:otherwise>
+                        <c:otherwise>A</c:otherwise>
                     </c:choose>
                 </div>
-                <div class="user-role-name">
-                    @<c:out value="${sessionScope.currentUser.username != null ? sessionScope.currentUser.username : 'admin'}" />
+                <div class="user-info-text">
+                    <div class="user-display-name">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.currentUser}">
+                                ${sessionScope.currentUser.full_name}
+                            </c:when>
+                            <c:otherwise>Quản trị viên</c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="user-role-name">
+                        @<c:out value="${sessionScope.currentUser.username != null ? sessionScope.currentUser.username : 'admin'}" />
+                    </div>
+                </div>
+                <i class="bi bi-chevron-up user-menu-more-icon"></i>
+            </button>
+
+            <!-- Popover Dropdown Menu (Nổi lên phía trên avatar) -->
+            <div class="sidebar-user-popover" id="sidebarUserPopover">
+                <div class="popover-user-header">
+                    <div class="popover-avatar">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.currentUser}">
+                                ${sessionScope.currentUser.full_name.substring(0, 1).toUpperCase()}
+                            </c:when>
+                            <c:otherwise>A</c:otherwise>
+                        </c:choose>
+                    </div>
+                    <div class="popover-info">
+                        <div class="popover-name">
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.currentUser}">
+                                    ${sessionScope.currentUser.full_name}
+                                </c:when>
+                                <c:otherwise>Quản trị viên</c:otherwise>
+                            </c:choose>
+                        </div>
+                        <div class="popover-email">
+                            <c:out value="${sessionScope.currentUser.email != null ? sessionScope.currentUser.email : 'admin@fe.edu.vn'}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popover-divider"></div>
+
+                <div class="popover-menu-list">
+                    <a href="${pageContext.request.contextPath}/profile" class="popover-menu-item">
+                        <i class="bi bi-person-badge-fill"></i>
+                        <span>Quản lý tài khoản</span>
+                    </a>
+                    <button type="button" class="popover-menu-item" id="btnOpenSettingsModal">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Cài đặt hệ thống</span>
+                    </button>
+                    <c:choose>
+                        <c:when test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">
+                            <a href="${pageContext.request.contextPath}/user" class="popover-menu-item">
+                                <i class="bi bi-shield-lock-fill"></i>
+                                <span>Bảng quản trị</span>
+                            </a>
+                        </c:when>
+                        <c:when test="${sessionScope.role eq 'INSTRUCTOR' or sessionScope.currentUser.role_id == 2}">
+                            <a href="${pageContext.request.contextPath}/classes" class="popover-menu-item">
+                                <i class="bi bi-easel-fill"></i>
+                                <span>Lớp học phụ trách</span>
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/chat" class="popover-menu-item">
+                                <i class="bi bi-robot"></i>
+                                <span>AI Tutor Chatbot</span>
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
+                <div class="popover-divider"></div>
+
+                <div class="popover-menu-list">
+                    <a href="${pageContext.request.contextPath}/logout" class="popover-menu-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Đăng xuất</span>
+                    </a>
                 </div>
             </div>
         </div>

@@ -70,9 +70,13 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // Nếu không phải Quản trị viên (Admin) -> từ chối truy cập
+        // Nếu không phải Quản trị viên (Admin) -> chuyển về trang tương ứng của vai trò
         if (!currentUser.isAdmin()) {
-            response.sendRedirect(request.getContextPath() + "/profile?error=admin_only");
+            if (currentUser.isInstructor()) {
+                response.sendRedirect(request.getContextPath() + "/classes");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/chat");
+            }
             return;
         }
 

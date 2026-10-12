@@ -199,4 +199,43 @@ public class UserService {
             throw new Exception("Xóa thất bại: " + err);
         }
     }
+
+    /**
+     * Người dùng tự đổi mật khẩu cá nhân.
+     */
+    public void changePassword(User currentUser, String oldPassword, String newPassword, String confirmPassword) throws Exception {
+        if (currentUser == null) {
+            throw new SecurityException("Vui lòng đăng nhập.");
+        }
+        if (oldPassword == null || oldPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mật khẩu hiện tại.");
+        }
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập mật khẩu mới.");
+        }
+        if (newPassword.length() < 6) {
+            throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 6 ký tự.");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Mật khẩu xác nhận không khớp với mật khẩu mới.");
+        }
+
+        // Lấy lại user từ DB để có password_hash chuẩn nhất
+        User dbUser = userDAO.getUserById(currentUser.getUser_id());
+        if (dbUser == null) {
+            throw new IllegalArgumentException("Không tìm thấy thông tin tài khoản.");
+        }
+
+        if (!PasswordUtil.verifyPassword(oldPassword, dbUser.getPassword_hash())) {
+            throw new IllegalArgumentException("Mật khẩu hiện tại không chính xác.");
+        }
+
+        String newHash = PasswordUtil.hashPassword(newPassword);
+        String err = userDAO.updatePassword(currentUser.getUser_id(), newHash);
+        if (err != null) {
+            throw new Exception("Đổi mật khẩu thất bại: " + err);
+        }
+        currentUser.setPassword_hash(newHash);
+    }
 }
+

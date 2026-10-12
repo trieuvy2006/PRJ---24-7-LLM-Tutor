@@ -36,10 +36,11 @@ public class UserController extends HttpServlet {
             try {
                 User profile = userService.getUserById(currentUser, currentUser.getUser_id());
                 request.setAttribute("user", profile);
-                request.getRequestDispatcher("/update.jsp").forward(request, response);
+                request.setAttribute("classList", new dao.ClassDAO().getAllClassesWithCount());
+                request.getRequestDispatcher("/profile.jsp").forward(request, response);
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
-                request.getRequestDispatcher("/user.jsp").forward(request, response);
+                request.getRequestDispatcher("/profile.jsp").forward(request, response);
             }
             return;
         }
@@ -47,8 +48,6 @@ public class UserController extends HttpServlet {
         // /users: Xem danh sách
         try {
             if (currentUser == null) {
-                // Nếu chưa đăng nhập qua session, chuyển hướng tới danh sách mặc định hoặc
-                // login
                 response.sendRedirect(request.getContextPath() + "/user");
                 return;
             }
@@ -76,13 +75,34 @@ public class UserController extends HttpServlet {
         }
 
         String action = request.getParameter("action");
+        if ("changePassword".equals(action)) {
+            String oldPass = request.getParameter("old_password");
+            String newPass = request.getParameter("new_password");
+            String confirmPass = request.getParameter("confirm_password");
+            try {
+                userService.changePassword(currentUser, oldPass, newPass, confirmPass);
+                session.setAttribute("currentUser", currentUser);
+                response.sendRedirect(request.getContextPath() + "/profile?message=password_changed");
+            } catch (Exception e) {
+                request.setAttribute("error", e.getMessage());
+                request.setAttribute("user", currentUser);
+                request.setAttribute("classList", new dao.ClassDAO().getAllClassesWithCount());
+                request.getRequestDispatcher("/profile.jsp").forward(request, response);
+            }
+            return;
+        }
+
         if ("updateProfile".equals(action)) {
             String fullName = request.getParameter("full_name");
+            // Với tài khoản không phải Admin, giữ nguyên họ tên chính thức nếu không gửi lên
+            if (fullName == null || fullName.trim().isEmpty()) {
+                fullName = currentUser.getFull_name();
+            }
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             String classIdRaw = request.getParameter("class_id");
 
-            Integer classId = null;
+            Integer classId = currentUser.getClass_id();
             if (classIdRaw != null && !classIdRaw.trim().isEmpty()) {
                 try {
                     classId = Integer.parseInt(classIdRaw.trim());
@@ -94,11 +114,12 @@ public class UserController extends HttpServlet {
                 userService.updateStudentProfile(currentUser, fullName, email, phone, classId);
                 // Cập nhật lại session
                 session.setAttribute("currentUser", currentUser);
-                response.sendRedirect(request.getContextPath() + "/user?message=profile_updated");
+                response.sendRedirect(request.getContextPath() + "/profile?message=profile_updated");
             } catch (Exception e) {
                 request.setAttribute("error", e.getMessage());
                 request.setAttribute("user", currentUser);
-                request.getRequestDispatcher("/update.jsp").forward(request, response);
+                request.setAttribute("classList", new dao.ClassDAO().getAllClassesWithCount());
+                request.getRequestDispatcher("/profile.jsp").forward(request, response);
             }
         }
     }
