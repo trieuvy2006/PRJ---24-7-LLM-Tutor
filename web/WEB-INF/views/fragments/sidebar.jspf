@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     AITA — 24/7 LLM Tutor Platform
     Fragment: sidebar.jspf (Role-Aware Collapsible Sidebar Navigation & User Account Popover)
 --%>
@@ -70,7 +70,7 @@
                 <i class="bi bi-easel-fill"></i>
                 <span>Lớp học phụ trách</span>
             </a>
-            <a href="#" class="nav-link" onclick="alert('Ngân hàng Bài tập đang được mở theo học kỳ!'); return false;">
+            <a href="${pageContext.request.contextPath}/assignments" class="nav-link">
                 <i class="bi bi-clipboard-check-fill"></i>
                 <span>Ngân hàng Bài tập</span>
             </a>
@@ -96,13 +96,13 @@
                 <span>AI Tutor Chatbot</span>
                 <span class="nav-badge" style="background:#10b981">LIVE</span>
             </a>
-            <a href="#" class="nav-link" onclick="alert('Mục Bài tập & Milestones sẽ mở theo lịch trình tuần học.'); return false;">
+            <a href="${pageContext.request.contextPath}/assignments" class="nav-link">
                 <i class="bi bi-journal-code"></i>
-                <span>Bài tập & Milestones</span>
+                <span>B\u00e0i t\u1eadp &amp; Milestones</span>
             </a>
-            <a href="#" class="nav-link" onclick="alert('Lịch sử các phiên hỏi đáp đang được lưu trữ an toàn.'); return false;">
+            <a href="${pageContext.request.contextPath}/submit?action=history" class="nav-link">
                 <i class="bi bi-clock-history"></i>
-                <span>Lịch sử Hỏi đáp</span>
+                <span>L\u1ecbch s\u1eed N\u1ed9p b\u00e0i</span>
             </a>
             <a href="#" class="nav-link" onclick="alert('Tài liệu môn học Java Web & CSDL đang có sẵn trong thư viện.'); return false;">
                 <i class="bi bi-folder2-open"></i>
