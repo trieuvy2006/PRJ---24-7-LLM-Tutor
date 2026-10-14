@@ -61,6 +61,7 @@
                     <!-- hidden field khi edit -->
                     <c:if test="${isEdit}">
                         <input type="hidden" name="assignment_id" value="${requestScope.assignment.assignment_id}">
+                        <fmt:formatDate value="${requestScope.assignment.deadline}" pattern="yyyy-MM-dd'T'HH:mm" var="deadlineFormatted"/>
                     </c:if>
 
                     <!-- Tiêu đề bài tập -->
@@ -105,7 +106,7 @@
                             <i class="bi bi-calendar-event-fill"></i> Hạn nộp (Deadline) <span class="text-danger">*</span>
                         </label>
                         <input type="datetime-local" id="deadline" name="deadline" class="form-control" required
-                               value="${isEdit ? deadlineFormatted : ''}">
+                               value="${not empty deadlineFormatted ? deadlineFormatted : ''}">
                         <small class="form-hint">
                             <i class="bi bi-info-circle"></i>
                             Sinh viên không thể nộp bài sau mốc thời gian này.

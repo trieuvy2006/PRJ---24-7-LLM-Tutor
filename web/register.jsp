@@ -5,8 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký tài khoản — AITA 24/7 LLM Tutor Platform</title>
-    <meta name="description" content="Tạo tài khoản sinh viên trên hệ thống gia sư AI 24/7 tại FPT University.">
+    <title>Đăng ký tài khoản — AITA</title>
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,57 +24,6 @@
 <body>
 
 <div class="auth-wrapper">
-    <!-- ── CỘT TRÁI: HERO BANNER ── -->
-    <div class="auth-hero">
-        <div class="auth-hero-glow"></div>
-
-        <div class="hero-brand">
-            <div class="brand-icon">A</div>
-            <div>
-                <div class="brand-name">AITA Platform</div>
-            </div>
-            <span class="brand-tag">FPT EDU • 24/7 AI</span>
-        </div>
-
-        <div class="hero-content">
-            <div class="hero-badge">
-                <span class="status-ping"></span>
-                <span>Tham gia cộng đồng học tập thông minh</span>
-            </div>
-
-            <h1 class="hero-title">
-                Khởi tạo hành trình làm chủ <span>Java Web</span> cùng AI
-            </h1>
-
-            <p class="hero-desc">
-                Đăng ký tài khoản sinh viên chỉ trong vài bước để được cấp quyền truy cập phòng trợ giảng AI, nhận bài tập và theo dõi tiến độ học tập 24/7.
-            </p>
-
-            <div class="hero-features">
-                <div class="feature-item">
-                    <div class="feature-icon speed"><i class="bi bi-person-check-fill"></i></div>
-                    <div class="feature-text">
-                        <h4>Kích hoạt tài khoản tức thì</h4>
-                        <p>Đồng bộ dữ liệu mã sinh viên và lớp học ngay sau khi hoàn tất đăng ký.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon ai"><i class="bi bi-shield-check"></i></div>
-                    <div class="feature-text">
-                        <h4>Bảo mật thông tin chuẩn mực</h4>
-                        <p>Mật khẩu được mã hóa an toàn, phân quyền rõ ràng theo từng vai trò.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-footer">
-            <span>© 2026 PRJ301 — Lập trình Java Web • FPT University</span>
-            <span>AITA Engine v2.4</span>
-        </div>
-    </div>
-
-    <!-- ── CỘT PHẢI: FORM ĐĂNG KÝ ── -->
     <div class="auth-panel">
         <div class="auth-top-controls">
             <button type="button" class="btn-theme-toggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">
@@ -84,9 +32,13 @@
         </div>
 
         <div class="auth-card wide">
-            <div class="auth-card-header">
-                <h2 class="auth-card-title">Tạo tài khoản mới</h2>
-                <p class="auth-card-sub">Điền các thông tin dưới đây để đăng ký tài khoản sinh viên.</p>
+            <!-- Tên Website & Logo -->
+            <div class="auth-card-header" style="text-align: center; margin-bottom: 24px;">
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                    <div class="brand-icon" style="width: 40px; height: 40px; font-size: 20px;">A</div>
+                    <span style="font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;">AITA Tutor</span>
+                </div>
+                <h2 class="auth-card-title" style="margin: 0; font-size: 22px;">Đăng ký tài khoản</h2>
             </div>
 
             <!-- Error Box -->
@@ -132,7 +84,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="reg-email">Email FPT Edu (*)</label>
+                    <label class="form-label" for="reg-email">Email (*)</label>
                     <div class="input-wrapper">
                         <i class="bi bi-envelope-fill input-icon"></i>
                         <input id="reg-email" type="email" name="email" class="form-input"
@@ -161,11 +113,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="reg-class">Lớp học phụ trách</label>
+                    <label class="form-label" for="reg-class">Lớp học</label>
                     <div class="input-wrapper">
                         <i class="bi bi-building input-icon"></i>
                         <select id="reg-class" name="class_id" class="form-input" style="padding-left:42px; cursor:pointer">
-                            <option value="">-- Chọn lớp học (Dành cho Sinh viên) --</option>
+                            <option value="">-- Chọn lớp học --</option>
                             <option value="1">SE1801 — Kỹ thuật Phần mềm 1801</option>
                             <option value="2">SE1802 — Kỹ thuật Phần mềm 1802</option>
                             <option value="3">IA1701 — An toàn Thông tin 1701</option>
@@ -175,8 +127,7 @@
 
                 <button id="btn-register" type="submit" class="btn-submit" style="margin-top:6px">
                     <span class="spinner"></span>
-                    <span>Tạo tài khoản học viên</span>
-                    <i class="bi bi-arrow-right"></i>
+                    <span>Đăng ký</span>
                 </button>
             </form>
 
@@ -185,8 +136,8 @@
             </div>
 
             <div class="auth-switch">
-                Đã có tài khoản trên AITA?
-                <a href="${pageContext.request.contextPath}/login">Đăng nhập ngay →</a>
+                Đã có tài khoản?
+                <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
             </div>
         </div>
     </div>

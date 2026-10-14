@@ -15,7 +15,10 @@ import java.io.IOException;
 /**
  * Filter để kiểm tra quyền truy cập (Authentication)
  */
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/user", "/add", "/update", "/delete", "/profile", "/chat", "/classes"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {
+    "/user", "/add", "/update", "/delete", "/profile", "/chat", "/classes",
+    "/assignments", "/submit"
+})
 public class AuthFilter implements Filter {
 
     @Override

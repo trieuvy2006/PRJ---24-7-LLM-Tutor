@@ -224,6 +224,10 @@ public class AssignmentServlet extends HttpServlet {
             }
 
             request.setAttribute("assignment", a);
+            if (a.getDeadline() != null) {
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                request.setAttribute("deadlineFormatted", sdf.format(a.getDeadline()));
+            }
             request.setAttribute("courses", assignmentDAO.getAllCourses());
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
 
@@ -262,22 +266,39 @@ public class AssignmentServlet extends HttpServlet {
                 return;
             }
 
+            if (title == null || title.trim().isEmpty()) {
+                request.setAttribute("error", "Tiêu đề bài tập không được để trống.");
+                request.setAttribute("assignment", existing);
+                request.setAttribute("deadlineFormatted", deadlineStr);
+                request.setAttribute("courses", assignmentDAO.getAllCourses());
+                request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
+                return;
+            }
+
             Timestamp deadline;
             try {
                 deadline = parseDeadline(deadlineStr);
             } catch (ParseException e) {
                 request.setAttribute("error", "Định dạng deadline không hợp lệ. Vui lòng chọn lại.");
                 request.setAttribute("assignment", existing);
+                request.setAttribute("deadlineFormatted", deadlineStr);
                 request.setAttribute("courses", assignmentDAO.getAllCourses());
                 request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
                 return;
             }
 
+            int courseId;
+            try {
+                courseId = Integer.parseInt(courseIdStr);
+            } catch (NumberFormatException e) {
+                courseId = existing.getCourse_id();
+            }
+
             Assignment updated = new Assignment(
                 id,
-                Integer.parseInt(courseIdStr),
-                currentUser.getUser_id(),
-                title != null ? title.trim() : existing.getTitle(),
+                courseId,
+                existing.getCreated_by(),
+                title.trim(),
                 description,
                 deadline,
                 existing.getCreated_at()
@@ -289,6 +310,7 @@ public class AssignmentServlet extends HttpServlet {
             } else {
                 request.setAttribute("error", "Cập nhật thất bại: " + err);
                 request.setAttribute("assignment", existing);
+                request.setAttribute("deadlineFormatted", deadlineStr);
                 request.setAttribute("courses", assignmentDAO.getAllCourses());
                 request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
             }

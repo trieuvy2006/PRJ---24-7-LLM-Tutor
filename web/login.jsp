@@ -5,8 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập — AITA 24/7 LLM Tutor Platform</title>
-    <meta name="description" content="Đăng nhập vào hệ thống gia sư AI thông minh 24/7 cho sinh viên FPT University.">
+    <title>Đăng nhập — AITA</title>
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,64 +24,6 @@
 <body>
 
 <div class="auth-wrapper">
-    <!-- ── CỘT TRÁI: HERO BANNER GIỚI THIỆU HỆ THỐNG GIA SƯ AI ── -->
-    <div class="auth-hero">
-        <div class="auth-hero-glow"></div>
-
-        <div class="hero-brand">
-            <div class="brand-icon">A</div>
-            <div>
-                <div class="brand-name">AITA Platform</div>
-            </div>
-            <span class="brand-tag">FPT EDU • 24/7 AI</span>
-        </div>
-
-        <div class="hero-content">
-            <div class="hero-badge">
-                <span class="status-ping"></span>
-                <span>Hệ thống AI Tutor đang trực tuyến</span>
-            </div>
-
-            <h1 class="hero-title">
-                Học tập không gián đoạn cùng <span>Gia sư AI 24/7</span>
-            </h1>
-
-            <p class="hero-desc">
-                Giải đáp lỗi code, gỡ rối thuật toán Java Web và đồng hành cùng sinh viên FPT University mọi lúc, mọi nơi ngay khi giảng viên vắng mặt.
-            </p>
-
-            <div class="hero-features">
-                <div class="feature-item">
-                    <div class="feature-icon ai"><i class="bi bi-robot"></i></div>
-                    <div class="feature-text">
-                        <h4>Trợ lý LLM chuyên sâu cho PRJ301</h4>
-                        <p>Tự động phân tích NullPointer, lỗi SQL và cấu trúc MVC theo thời gian thực.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon code"><i class="bi bi-code-slash"></i></div>
-                    <div class="feature-text">
-                        <h4>Gợi ý phương pháp, không chép hộ</h4>
-                        <p>Hướng dẫn tư duy từng bước theo chuẩn đầu ra của môn học.</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon speed"><i class="bi bi-lightning-charge-fill"></i></div>
-                    <div class="feature-text">
-                        <h4>Phản hồi tức thì dưới 1 giây</h4>
-                        <p>Sẵn sàng hỗ trợ 24/7 ngay cả trong các buổi ôn thi hay làm đồ án đêm.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-footer">
-            <span>© 2026 PRJ301 — Lập trình Java Web • FPT University</span>
-            <span>AITA Engine v2.4</span>
-        </div>
-    </div>
-
-    <!-- ── CỘT PHẢI: FORM ĐĂNG NHẬP GỌN GÀNG, HIỆN ĐẠI ── -->
     <div class="auth-panel">
         <div class="auth-top-controls">
             <button type="button" class="btn-theme-toggle" aria-label="Đổi giao diện sáng/tối" title="Đổi giao diện sáng/tối">
@@ -91,9 +32,13 @@
         </div>
 
         <div class="auth-card">
-            <div class="auth-card-header">
-                <h2 class="auth-card-title">Đăng nhập</h2>
-                <p class="auth-card-sub">Chào mừng trở lại! Vui lòng nhập thông tin tài khoản.</p>
+            <!-- Tên Website & Logo -->
+            <div class="auth-card-header" style="text-align: center; margin-bottom: 24px;">
+                <div style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                    <div class="brand-icon" style="width: 40px; height: 40px; font-size: 20px;">A</div>
+                    <span style="font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em;">AITA Tutor</span>
+                </div>
+                <h2 class="auth-card-title" style="margin: 0; font-size: 22px;">Đăng nhập</h2>
             </div>
 
             <!-- Thông báo Lỗi Đăng Nhập -->
@@ -104,13 +49,13 @@
                         <c:choose>
                             <c:when test="${not empty error}">${error}</c:when>
                             <c:when test="${param.error eq 'access_denied'}">
-                                <strong>Từ chối truy cập:</strong> Chức năng này chỉ dành riêng cho Quản trị viên (Admin). Vui lòng đăng nhập với tài khoản Admin.
+                                Vui lòng đăng nhập để tiếp tục.
                             </c:when>
                             <c:when test="${param.error eq 'admin_only'}">
-                                <strong>Thông báo:</strong> Tài khoản của bạn không có quyền truy cập trang quản lý người dùng.
+                                Tài khoản không có quyền truy cập trang này.
                             </c:when>
                             <c:when test="${param.error eq 'invalid'}">
-                                <strong>Đăng nhập thất bại:</strong> Tên đăng nhập hoặc mật khẩu không chính xác!
+                                Tên đăng nhập hoặc mật khẩu không chính xác!
                             </c:when>
                             <c:otherwise>${param.error}</c:otherwise>
                         </c:choose>
@@ -122,7 +67,7 @@
             <c:if test="${param.message eq 'logged_out'}">
                 <div class="alert-box alert-success">
                     <i class="bi bi-check-circle-fill" style="font-size:16px; flex-shrink:0"></i>
-                    <div>Bạn đã đăng xuất an toàn khỏi hệ thống.</div>
+                    <div>Đã đăng xuất thành công.</div>
                 </div>
             </c:if>
 
@@ -134,7 +79,7 @@
                         <i class="bi bi-person-fill input-icon"></i>
                         <input id="username" type="text" name="username" class="form-input"
                                value="${not empty username ? username : cookie.cuser.value}"
-                               placeholder="Nhập tên tài khoản..." required autofocus />
+                               placeholder="Nhập tên đăng nhập" required autofocus />
                     </div>
                 </div>
 
@@ -144,7 +89,7 @@
                         <i class="bi bi-lock-fill input-icon"></i>
                         <input id="password" type="password" name="password" class="form-input"
                                value="${cookie.cpass.value}"
-                               placeholder="Nhập mật khẩu..." required />
+                               placeholder="Nhập mật khẩu" required />
                         <button type="button" class="btn-toggle-pass" aria-label="Hiện/ẩn mật khẩu">
                             <i class="bi bi-eye-fill"></i>
                         </button>
@@ -155,14 +100,13 @@
                     <label class="checkbox-label" for="remember">
                         <input type="checkbox" name="remember" id="remember"
                                ${not empty cookie.cuser ? 'checked' : ''} />
-                        <span>Ghi nhớ đăng nhập trong 7 ngày</span>
+                        <span>Ghi nhớ mật khẩu</span>
                     </label>
                 </div>
 
                 <button id="btn-login" type="submit" class="btn-submit">
                     <span class="spinner"></span>
-                    <span>Đăng nhập vào hệ thống</span>
-                    <i class="bi bi-arrow-right"></i>
+                    <span>Đăng nhập</span>
                 </button>
             </form>
 
@@ -171,8 +115,8 @@
             </div>
 
             <div class="auth-switch">
-                Chưa có tài khoản học viên?
-                <a href="${pageContext.request.contextPath}/register">Tạo tài khoản ngay →</a>
+                Chưa có tài khoản?
+                <a href="${pageContext.request.contextPath}/register">Đăng ký ngay</a>
             </div>
         </div>
     </div>
