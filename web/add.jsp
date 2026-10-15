@@ -26,7 +26,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Thêm Người dùng Mới</h1>
-                    <p>Khởi tạo tài khoản Quản trị viên, Giảng viên hoặc Sinh viên với đầy đủ thông tin.</p>
                 </div>
                 <div class="page-header-actions">
                     <a href="user" class="btn btn-secondary">

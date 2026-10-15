@@ -26,7 +26,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Quản lý Tài khoản & Phân quyền</h1>
-                    <p>Xem danh sách, tìm kiếm và phân quyền các tài khoản Admin, Giảng viên và Sinh viên.</p>
                 </div>
                 <div class="page-header-actions">
                     <c:if test="${sessionScope.role eq 'ADMIN' or sessionScope.currentUser.role_id == 1}">

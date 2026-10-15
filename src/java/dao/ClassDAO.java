@@ -35,17 +35,17 @@ public class ClassDAO extends DBContext {
 
                 ClassRoom cr = new ClassRoom(id, code, name, count);
                 if (code.startsWith("SE1801")) {
-                    cr.setCourse_code("PRJ301 (Java Web)");
+                    cr.setCourse_code("PRJ301 - Java Web Application Development");
                     cr.setSchedule("Thứ 2, 4 (Ca 2: 09:30 - 11:50)");
-                    cr.setRoom("Phòng Alpha 302");
+                    cr.setRoom("Phòng 302");
                 } else if (code.startsWith("SE1802")) {
-                    cr.setCourse_code("PRJ301 (Java Web)");
+                    cr.setCourse_code("CSD201 - Data Structures and Algorithms");
                     cr.setSchedule("Thứ 3, 5 (Ca 3: 13:00 - 15:20)");
-                    cr.setRoom("Phòng Beta 204");
-                } else if (code.startsWith("IA")) {
-                    cr.setCourse_code("IAO201 (An toàn thông tin)");
+                    cr.setRoom("Phòng 204");
+                } else if (code.startsWith("AI") || code.startsWith("IA")) {
+                    cr.setCourse_code("IOT102 - Internet of Things");
                     cr.setSchedule("Thứ 4, 6 (Ca 4: 15:30 - 17:50)");
-                    cr.setRoom("Phòng Lab Cyber 101");
+                    cr.setRoom("Phòng 405");
                 }
                 list.add(cr);
             }

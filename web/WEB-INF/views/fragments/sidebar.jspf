@@ -1,4 +1,4 @@
-﻿<%-- 
+<%-- 
     AITA — 24/7 LLM Tutor Platform
     Fragment: sidebar.jspf (Role-Aware Collapsible Sidebar Navigation & User Account Popover)
 --%>
@@ -98,11 +98,11 @@
             </a>
             <a href="${pageContext.request.contextPath}/assignments" class="nav-link">
                 <i class="bi bi-journal-code"></i>
-                <span>B\u00e0i t\u1eadp &amp; Milestones</span>
+                <span>Bài tập &amp; Milestones</span>
             </a>
             <a href="${pageContext.request.contextPath}/submit?action=history" class="nav-link">
                 <i class="bi bi-clock-history"></i>
-                <span>L\u1ecbch s\u1eed N\u1ed9p b\u00e0i</span>
+                <span>Lịch sử Nộp bài</span>
             </a>
             <a href="#" class="nav-link" onclick="alert('Tài liệu môn học Java Web & CSDL đang có sẵn trong thư viện.'); return false;">
                 <i class="bi bi-folder2-open"></i>

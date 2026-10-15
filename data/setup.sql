@@ -92,7 +92,7 @@ CREATE TABLE Submissions (
     submission_id INT IDENTITY(1,1) PRIMARY KEY,
     assignment_id INT NOT NULL,
     student_id INT NOT NULL,
-    sha256_hash VARCHAR(64) NOT NULL UNIQUE,
+    sha256_hash VARCHAR(64) NOT NULL,
     file_path VARCHAR(255) NOT NULL,
     attempt_number INT NOT NULL DEFAULT 1,
     submitted_at DATETIME DEFAULT GETDATE(),
@@ -146,6 +146,19 @@ CREATE TABLE Personalized_Learning_Paths (
     CONSTRAINT FK_LearningPaths_Users FOREIGN KEY (student_id) REFERENCES Users(user_id),
 	CONSTRAINT CHK_Path_Status CHECK (status IN ('IN_PROGRESS', 'COMPLETED', 'SKIPPED'))
 );
+
+-- 3.12 Bảng Instructor_Courses (Phân công Giảng viên dạy môn học & lớp học, tối đa 2 môn)
+CREATE TABLE Instructor_Courses (
+    assignment_id INT IDENTITY(1,1) PRIMARY KEY,
+    instructor_id INT NOT NULL,
+    course_id INT NOT NULL,
+    class_id INT NULL,
+    shift_name NVARCHAR(50) NOT NULL,
+    room_number NVARCHAR(20) NOT NULL,
+    CONSTRAINT FK_IC_Instructor FOREIGN KEY (instructor_id) REFERENCES Users(user_id),
+    CONSTRAINT FK_IC_Course FOREIGN KEY (course_id) REFERENCES Courses(course_id),
+    CONSTRAINT FK_IC_Class FOREIGN KEY (class_id) REFERENCES Classes(class_id)
+);
 GO
 
 -- =========================================================
@@ -160,9 +173,9 @@ INSERT INTO Roles (role_name) VALUES
 
 -- 4.2 Bảng Classes
 INSERT INTO Classes (class_code, class_name) VALUES 
-('SE1801', N'Kỹ thuật Phần mềm 1801'),
-('SE1802', N'Kỹ thuật Phần mềm 1802'),
-('IA1701', N'An toàn Thông tin 1701');
+('SE1801', 'Java Web Application Development'),
+('SE1802', 'Data Structures and Algorithms'),
+('AI1701', 'Internet of Things');
 
 -- 4.3 Bảng Users
 INSERT INTO Users (role_id, username, password_hash, full_name, email, phone, student_code, class_id) VALUES 
@@ -173,30 +186,43 @@ INSERT INTO Users (role_id, username, password_hash, full_name, email, phone, st
 (3, 'vynt', 'hash_vynt_123', N'Nhật Tường Vy', 'vyntse180001@fpt.edu.vn', '0987654322', 'SE180001', 1),
 (3, 'khoana', 'hash_khoana_123', N'Nguyễn Anh Khoa', 'khoanase180002@fpt.edu.vn', '0987654323', 'SE180002', 1),
 (3, 'baov', 'hash_baov_123', N'Văn Bảo', 'baovse180003@fpt.edu.vn', '0987654324', 'SE180003', 2),
-(3, 'tuanna', 'hash_tuanna_123', N'Nguyễn Anh Tuấn', 'tuannase170001@fpt.edu.vn', '0987654325', 'IA170001', 3);
+(3, 'tuanna', 'hash_tuanna_123', N'Nguyễn Anh Tuấn', 'tuannase170001@fpt.edu.vn', '0987654325', 'AI170001', 3);
 
--- 4.4 Bảng Courses
+-- 4.4 Bảng Courses (5 môn học của học kỳ)
 INSERT INTO Courses (course_code, course_name, description) VALUES 
-('PRJ301', N'Lập trình Java Web', N'Phát triển ứng dụng Web MVC2 với Java Servlet, JSP và JDBC'),
-('DBW301', N'Cơ sở dữ liệu nâng cao', N'Thiết kế, quản trị và tối ưu hóa truy vấn CSDL SQL Server'),
-('SWP391', N'Dự án Phần mềm Mẫu', N'Thực hành quy trình phát triển phần mềm theo mô hình Agile/Scrum');
+('IOT102', 'Internet of Things', 'IoT system architecture, ESP32/Arduino microcontrollers and MQTT protocol'),
+('PRJ301', 'Java Web Application Development', 'Web MVC2 application development with Java Servlet, JSP, JDBC and SQL Server'),
+('SWR302', 'Software Requirements', 'Requirements elicitation, SRS specification, analysis and Agile/Scrum system modeling'),
+('JPD123', 'Elementary Japanese 1', 'Hiragana, Katakana, basic Kanji and entry-level Japanese communication'),
+('CSD201', 'Data Structures and Algorithms', 'Linked Lists, Stacks, Queues, Binary Trees, BST, AVL and Graph algorithms');
 
--- 4.5 Bảng Course_Enrollments
+-- 4.5 Bảng Course_Enrollments (Sinh viên học cả 5 môn: IOT102, PRJ301, SWR302, JPD123, CSD201)
 INSERT INTO Course_Enrollments (student_id, course_id) VALUES 
-(4, 1), (4, 2), (5, 1), (5, 3), (6, 1), (7, 2), (8, 3);
+(4, 1), (4, 2), (4, 3), (4, 4), (4, 5), -- duynd
+(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), -- vynt
+(6, 1), (6, 2), (6, 3), (6, 4), (6, 5), -- khoana
+(7, 1), (7, 2), (7, 3), (7, 4), (7, 5), -- baov / vanbao
+(8, 1), (8, 2), (8, 3), (8, 4), (8, 5); -- tuanna
 
--- 4.6 Bảng Assignments
+-- 4.6 Phân công Giảng viên (Giáo viên dạy tối đa 2 môn, các lớp khác nhau, khác ca, phòng 201-220, 301-320, 401-420, 501-520)
+INSERT INTO Instructor_Courses (instructor_id, course_id, class_id, shift_name, room_number) VALUES
+(2, 2, 1, N'Ca 2 (09:30 - 11:50)', N'Phòng 302'), -- dungkt dạy PRJ301 lớp SE1801 Ca 2 Phòng 302
+(2, 5, 2, N'Ca 3 (13:00 - 15:20)', N'Phòng 204'), -- dungkt dạy CSD201 lớp SE1802 Ca 3 Phòng 204
+(3, 3, 3, N'Ca 4 (15:30 - 17:50)', N'Phòng 405'), -- haonn dạy SWR302 lớp AI1701 Ca 4 Phòng 405
+(3, 4, 1, N'Ca 1 (07:00 - 09:20)', N'Phòng 510'); -- haonn dạy JPD123 lớp SE1801 Ca 1 Phòng 510
+
+-- 4.7 Bảng Assignments
 INSERT INTO Assignments (course_id, created_by, title, description, deadline) VALUES 
-(1, 2, N'Milestone 1 - Cấu trúc MVC & Setup Framework', N'Vẽ sơ đồ MVC2 và tạo bộ khung dự án Java Web trống', '2026-09-30 23:59:59'),
-(1, 2, N'Milestone 2 - Xây dựng Cổng Nộp Bài (Submission Portal)', N'Lập trình Servlet/JSP upload file nén ZIP và mã băm SHA-256', '2026-10-15 23:59:59'),
-(2, 3, N'Assignment 1 - Thiết kế Database chuẩn 3NF', N'Thiết kế sơ đồ ERD và viết kịch bản SQL Script tạo bảng', '2026-10-05 23:59:59');
+(2, 2, N'Milestone 1 - Cấu trúc MVC & Setup Framework', N'Vẽ sơ đồ MVC2 và tạo bộ khung dự án Java Web trống', '2026-10-30 23:59:59'),
+(2, 2, N'Milestone 2 - Xây dựng Cổng Nộp Bài (Submission Portal)', N'Lập trình Servlet/JSP upload file nén ZIP và mã băm SHA-256', '2026-11-15 23:59:59'),
+(5, 2, N'Assignment 1 - Cây nhị phân tìm kiếm BST', N'Cài đặt thuật toán duyệt cây tiền tự, trung tự và hậu tự trong Java', '2026-11-20 23:59:59'),
+(3, 3, N'Milestone 1 - Tài liệu đặc tả yêu cầu SRS', N'Phân tích Use Case và vẽ Sequence Diagram cho phân hệ người dùng', '2026-11-10 23:59:59');
 
--- 4.7 Bảng Submissions
+-- 4.8 Bảng Submissions
 INSERT INTO Submissions (assignment_id, student_id, sha256_hash, file_path, attempt_number, status) VALUES
-(1, 4, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '/uploads/PRJ301/M1_SE180000_v1.zip', 1, 'GRADED'),
-(1, 5, 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', '/uploads/PRJ301/M1_SE180001_v1.zip', 1, 'GRADED'),
-(1, 6, '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9', '/uploads/PRJ301/M1_SE180002_v1.zip', 1, 'FAILED'),
-(2, 4, '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a', '/uploads/PRJ301/M2_SE180000_v1.zip', 1, 'PENDING');
+(1, 4, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', '/uploads/PRJ301_1_SE180000_v1.zip', 1, 'GRADED'),
+(1, 5, 'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb', '/uploads/PRJ301_1_SE180001_v1.zip', 1, 'GRADED'),
+(1, 6, '5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9', '/uploads/PRJ301_1_SE180002_v1.zip', 1, 'FAILED');
 
 -- 4.8 Bảng Grades
 INSERT INTO Grades (submission_id, score, feedback) VALUES 

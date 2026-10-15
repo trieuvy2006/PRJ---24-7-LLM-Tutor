@@ -129,6 +129,7 @@ public class AssignmentServlet extends HttpServlet {
 
     /**
      * Hiển thị form TẠO bài tập mới (chỉ Admin và Instructor).
+     * Giáo viên chỉ được xem và chọn các môn mình được phân công giảng dạy (tối đa 2 môn).
      */
     private void handleShowAddForm(HttpServletRequest request, HttpServletResponse response, User currentUser)
             throws ServletException, IOException {
@@ -137,12 +138,16 @@ public class AssignmentServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/assignments");
             return;
         }
-        request.setAttribute("courses", assignmentDAO.getAllCourses());
+        List<model.courses> courses = currentUser.isAdmin()
+                ? assignmentDAO.getAllCourses()
+                : assignmentDAO.getCoursesByInstructorId(currentUser.getUser_id());
+        request.setAttribute("courses", courses);
         request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
     }
 
     /**
      * Xử lý tạo bài tập mới (POST).
+     * Ràng buộc: Giáo viên dạy môn nào chỉ được phép làm nội dung deadline cho môn học đó.
      */
     private void handleDoAdd(HttpServletRequest request, HttpServletResponse response, User currentUser)
             throws ServletException, IOException {
@@ -152,6 +157,10 @@ public class AssignmentServlet extends HttpServlet {
             return;
         }
 
+        List<model.courses> allowedCourses = currentUser.isAdmin()
+                ? assignmentDAO.getAllCourses()
+                : assignmentDAO.getCoursesByInstructorId(currentUser.getUser_id());
+
         String title       = request.getParameter("title");
         String description = request.getParameter("description");
         String courseIdStr = request.getParameter("course_id");
@@ -160,7 +169,7 @@ public class AssignmentServlet extends HttpServlet {
         // Validation
         if (title == null || title.trim().isEmpty()) {
             request.setAttribute("error", "Tiêu đề bài tập không được để trống.");
-            request.setAttribute("courses", assignmentDAO.getAllCourses());
+            request.setAttribute("courses", allowedCourses);
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
             return;
         }
@@ -170,7 +179,7 @@ public class AssignmentServlet extends HttpServlet {
             deadline = parseDeadline(deadlineStr);
         } catch (ParseException e) {
             request.setAttribute("error", "Định dạng deadline không hợp lệ. Vui lòng chọn lại.");
-            request.setAttribute("courses", assignmentDAO.getAllCourses());
+            request.setAttribute("courses", allowedCourses);
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
             return;
         }
@@ -180,9 +189,26 @@ public class AssignmentServlet extends HttpServlet {
             courseId = Integer.parseInt(courseIdStr);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Vui lòng chọn môn học.");
-            request.setAttribute("courses", assignmentDAO.getAllCourses());
+            request.setAttribute("courses", allowedCourses);
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
             return;
+        }
+
+        // Kiểm tra quyền hạn: Giáo viên chỉ được tạo deadline cho môn học mình dạy
+        if (currentUser.isInstructor()) {
+            boolean canTeach = false;
+            for (model.courses c : allowedCourses) {
+                if (c.getCourse_id() == courseId) {
+                    canTeach = true;
+                    break;
+                }
+            }
+            if (!canTeach) {
+                request.setAttribute("error", "Giáo viên chỉ được phép tạo deadline cho môn học mình đang phụ trách giảng dạy (tối đa 2 môn)!");
+                request.setAttribute("courses", allowedCourses);
+                request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
+                return;
+            }
         }
 
         Assignment a = new Assignment(courseId, currentUser.getUser_id(), title.trim(), description, deadline);
@@ -192,7 +218,7 @@ public class AssignmentServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/assignments?message=created");
         } else {
             request.setAttribute("error", "Tạo bài tập thất bại: " + err);
-            request.setAttribute("courses", assignmentDAO.getAllCourses());
+            request.setAttribute("courses", allowedCourses);
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
         }
     }
@@ -228,7 +254,10 @@ public class AssignmentServlet extends HttpServlet {
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                 request.setAttribute("deadlineFormatted", sdf.format(a.getDeadline()));
             }
-            request.setAttribute("courses", assignmentDAO.getAllCourses());
+            List<model.courses> courses = currentUser.isAdmin()
+                    ? assignmentDAO.getAllCourses()
+                    : assignmentDAO.getCoursesByInstructorId(currentUser.getUser_id());
+            request.setAttribute("courses", courses);
             request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
@@ -266,11 +295,15 @@ public class AssignmentServlet extends HttpServlet {
                 return;
             }
 
+            List<model.courses> allowedCourses = currentUser.isAdmin()
+                    ? assignmentDAO.getAllCourses()
+                    : assignmentDAO.getCoursesByInstructorId(currentUser.getUser_id());
+
             if (title == null || title.trim().isEmpty()) {
                 request.setAttribute("error", "Tiêu đề bài tập không được để trống.");
                 request.setAttribute("assignment", existing);
                 request.setAttribute("deadlineFormatted", deadlineStr);
-                request.setAttribute("courses", assignmentDAO.getAllCourses());
+                request.setAttribute("courses", allowedCourses);
                 request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
                 return;
             }
@@ -282,7 +315,7 @@ public class AssignmentServlet extends HttpServlet {
                 request.setAttribute("error", "Định dạng deadline không hợp lệ. Vui lòng chọn lại.");
                 request.setAttribute("assignment", existing);
                 request.setAttribute("deadlineFormatted", deadlineStr);
-                request.setAttribute("courses", assignmentDAO.getAllCourses());
+                request.setAttribute("courses", allowedCourses);
                 request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
                 return;
             }
@@ -292,6 +325,25 @@ public class AssignmentServlet extends HttpServlet {
                 courseId = Integer.parseInt(courseIdStr);
             } catch (NumberFormatException e) {
                 courseId = existing.getCourse_id();
+            }
+
+            // Kiểm tra quyền: Giáo viên chỉ được sửa cho môn học mình phụ trách
+            if (currentUser.isInstructor()) {
+                boolean canTeach = false;
+                for (model.courses c : allowedCourses) {
+                    if (c.getCourse_id() == courseId) {
+                        canTeach = true;
+                        break;
+                    }
+                }
+                if (!canTeach) {
+                    request.setAttribute("error", "Giáo viên chỉ được phép chỉnh sửa deadline cho môn học mình phụ trách giảng dạy!");
+                    request.setAttribute("assignment", existing);
+                    request.setAttribute("deadlineFormatted", deadlineStr);
+                    request.setAttribute("courses", allowedCourses);
+                    request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
+                    return;
+                }
             }
 
             Assignment updated = new Assignment(
@@ -311,7 +363,7 @@ public class AssignmentServlet extends HttpServlet {
                 request.setAttribute("error", "Cập nhật thất bại: " + err);
                 request.setAttribute("assignment", existing);
                 request.setAttribute("deadlineFormatted", deadlineStr);
-                request.setAttribute("courses", assignmentDAO.getAllCourses());
+                request.setAttribute("courses", allowedCourses);
                 request.getRequestDispatcher("/WEB-INF/views/assignments/form.jsp").forward(request, response);
             }
 

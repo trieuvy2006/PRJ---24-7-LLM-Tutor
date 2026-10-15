@@ -28,7 +28,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>${isEdit ? 'Chỉnh sửa Bài tập' : 'Tạo Bài tập mới'}</h1>
-                    <p>${isEdit ? 'Cập nhật thông tin, mô tả hoặc gia hạn deadline bài tập.' : 'Điền thông tin để tạo bài tập / milestone mới cho sinh viên.'}</p>
                 </div>
                 <div class="page-header-actions">
                     <a href="${pageContext.request.contextPath}/assignments" class="btn btn-secondary">
@@ -89,6 +88,10 @@
                                 </option>
                             </c:forEach>
                         </select>
+                        <small class="form-hint">
+                            <i class="bi bi-info-circle"></i>
+                            Giáo viên chỉ được phép làm nội dung deadline cho môn học mình phụ trách (tối đa 2 môn).
+                        </small>
                     </div>
 
                     <!-- Mô tả -->
@@ -173,8 +176,19 @@
 })();
 </c:if>
 
-// Đặt min datetime bằng giờ hiện tại
-document.getElementById('deadline').min = new Date().toISOString().slice(0,16);
+// Đặt min datetime bằng giờ hiện tại và mặc định 7 ngày sau nếu tạo mới
+const dlInput = document.getElementById('deadline');
+if (dlInput) {
+    dlInput.min = new Date().toISOString().slice(0,16);
+    if (!dlInput.value) {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        d.setHours(23, 59, 0, 0);
+        const pad = n => String(n).padStart(2, '0');
+        dlInput.value = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate())
+                     + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+}
 </script>
 </body>
 </html>

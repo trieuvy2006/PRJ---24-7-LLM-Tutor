@@ -187,20 +187,12 @@ public class SubmissionServlet extends HttpServlet {
             return;
         }
 
-        // Tính SHA-256 của file
-        String sha256;
-        try (InputStream is = filePart.getInputStream()) {
-            sha256 = computeSHA256(is);
-        } catch (NoSuchAlgorithmException e) {
-            request.setAttribute("error", "Lỗi hệ thống khi tính mã hash file. Vui lòng thử lại.");
-            request.setAttribute("assignment", assignment);
-            request.getRequestDispatcher("/WEB-INF/views/assignments/submit.jsp").forward(request, response);
-            return;
-        }
-
         // Đếm số lần nộp trước đó để tính attempt_number
         int prevAttempts = submissionDAO.countAttempts(assignmentId, currentUser.getUser_id());
         int attemptNumber = prevAttempts + 1;
+
+        // Đảm bảo sinh viên đã được ghi danh môn học này
+        assignmentDAO.ensureStudentEnrolledCourse(currentUser.getUser_id(), assignment.getCourse_id());
 
         // Xác định đường dẫn lưu file
         String safeStudentCode = currentUser.getStudent_code() != null
@@ -210,13 +202,42 @@ public class SubmissionServlet extends HttpServlet {
                 + safeStudentCode + "_v" + attemptNumber + ".zip";
         String relativePath = UPLOAD_DIR + "/" + savedFileName;
 
-        // Lưu file vật lý vào server (thư mục uploadDir)
-        String uploadDirAbsolute = getServletContext().getRealPath("") + File.separator + "uploads";
-        File uploadFolder = new File(uploadDirAbsolute);
+        // Xác định thư mục upload an toàn
+        String basePath = getServletContext().getRealPath("");
+        if (basePath == null || basePath.trim().isEmpty()) {
+            basePath = System.getProperty("user.dir");
+        }
+        File uploadFolder = new File(basePath, "uploads");
         if (!uploadFolder.exists()) {
             uploadFolder.mkdirs();
         }
-        filePart.write(uploadDirAbsolute + File.separator + savedFileName);
+        File destFile = new File(uploadFolder, savedFileName);
+
+        // Lưu file vật lý vào server và đồng thời tính mã SHA-256 trong 1 lần đọc stream
+        String sha256;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            try (InputStream in = filePart.getInputStream();
+                 java.io.OutputStream out = new java.io.FileOutputStream(destFile)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    digest.update(buffer, 0, bytesRead);
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            byte[] hashBytes = digest.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            sha256 = sb.toString();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            request.setAttribute("error", "Lỗi lưu file bài làm: " + e.getMessage());
+            request.setAttribute("assignment", assignment);
+            request.getRequestDispatcher("/WEB-INF/views/assignments/submit.jsp").forward(request, response);
+            return;
+        }
 
         // Lưu Submission vào database
         Submission sub = new Submission(assignmentId, currentUser.getUser_id(),

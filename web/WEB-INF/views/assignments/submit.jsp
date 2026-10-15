@@ -26,7 +26,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Nộp Bài Tập</h1>
-                    <p>Upload file ZIP bài làm của bạn. Hệ thống sẽ tính mã SHA-256 để xác nhận tính toàn vẹn.</p>
                 </div>
                 <div class="page-header-actions">
                     <a href="${pageContext.request.contextPath}/assignments" class="btn btn-secondary">
@@ -63,14 +62,20 @@
                     </c:choose>
                 </div>
                 <div style="padding: 1.25rem 1.5rem;">
-                    <div class="form-group-inline">
+                    <div class="form-group-inline" style="flex-wrap:wrap; gap:0.5rem; align-items:flex-start;">
                         <span class="badge badge-course">
                             <c:out value="${requestScope.assignment.course_code}"/>
                         </span>
-                        <h3 style="margin: 0; font-size: 1.1rem;">
-                            <c:out value="${requestScope.assignment.title}"/>
-                        </h3>
+                        <c:if test="${not empty requestScope.assignment.course_name}">
+                            <span class="text-subtle" style="font-size:0.9rem; align-self:center;">
+                                <c:out value="${requestScope.assignment.course_name}"/>
+                            </span>
+                        </c:if>
                     </div>
+                    <h3 style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        <c:out value="${requestScope.assignment.title}"/>
+                    </h3>
+                
                     <c:if test="${not empty requestScope.assignment.description}">
                         <p style="margin-top: 0.75rem; color: var(--text-subtle); white-space: pre-line;">
                             <c:out value="${requestScope.assignment.description}"/>
@@ -147,7 +152,7 @@
 
                         <div class="form-hint" style="margin-top: 1rem;">
                             <i class="bi bi-shield-check" style="color:#10b981"></i>
-                            Hệ thống sẽ tính mã <strong>SHA-256</strong> của file để kiểm tra tính toàn vẹn và phát hiện bài trùng lặp.
+                            File ZIP của bạn sẽ được lưu trữ an toàn trên hệ thống.
                         </div>
 
                         <div class="form-actions" style="margin-top: 1.5rem;">

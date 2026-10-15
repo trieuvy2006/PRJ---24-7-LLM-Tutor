@@ -346,4 +346,27 @@ public class UserDAO extends DBContext {
     public boolean checkEmailExists(String email) {
         return getUserByEmail(email) != null;
     }
+
+    /**
+     * Ghi danh sinh viên vào các môn học được chọn (hỗ trợ chọn nhiều môn cùng lúc).
+     */
+    public void enrollStudentCourses(int studentId, String[] courseCodes) {
+        if (courseCodes == null || courseCodes.length == 0) return;
+        String sql = "INSERT INTO dbo.Course_Enrollments (student_id, course_id) "
+                   + "SELECT ?, c.course_id FROM dbo.Courses c "
+                   + "WHERE c.course_code = ? "
+                   + "  AND NOT EXISTS (SELECT 1 FROM dbo.Course_Enrollments ce WHERE ce.student_id = ? AND ce.course_id = c.course_id)";
+        try {
+            for (String code : courseCodes) {
+                if (code == null || code.trim().isEmpty()) continue;
+                PreparedStatement st = connection.prepareStatement(sql);
+                st.setInt(1, studentId);
+                st.setString(2, code.trim().toUpperCase());
+                st.setInt(3, studentId);
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi enrollStudentCourses: " + e.getMessage());
+        }
+    }
 }

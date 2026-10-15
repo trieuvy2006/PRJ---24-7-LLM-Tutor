@@ -26,7 +26,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Lịch sử Nộp Bài & Kết Quả</h1>
-                    <p>Xem lại tất cả bài đã nộp, trạng thái chấm điểm và phản hồi của hệ thống AI.</p>
                 </div>
                 <div class="page-header-actions">
                     <a href="${pageContext.request.contextPath}/assignments" class="btn btn-secondary">

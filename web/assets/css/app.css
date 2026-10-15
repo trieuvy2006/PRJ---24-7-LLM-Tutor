@@ -6,7 +6,7 @@
 
 :root {
   /* Font & Dimensions */
-  --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family: 'Be Vietnam Pro', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 76px;
   --topbar-height: 70px;

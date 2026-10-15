@@ -24,14 +24,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Bài tập & Milestones</h1>
-                    <c:choose>
-                        <c:when test="${sessionScope.currentUser.isStudent()}">
-                            <p>Danh sách bài tập của các môn học bạn đang theo học.</p>
-                        </c:when>
-                        <c:otherwise>
-                            <p>Quản lý bài tập, deadline và theo dõi tiến độ nộp bài của sinh viên.</p>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
                 <div class="page-header-actions">
                     <c:if test="${not sessionScope.currentUser.isStudent()}">
@@ -125,9 +117,16 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge badge-course">
-                                                    <c:out value="${a.course_code}"/>
-                                                </span>
+                                                <div class="course-cell">
+                                                    <span class="badge badge-course">
+                                                        <c:out value="${a.course_code}"/>
+                                                    </span>
+                                                    <c:if test="${not empty a.course_name}">
+                                                        <small class="text-subtle" style="display:block; margin-top:2px;">
+                                                            <c:out value="${a.course_name}"/>
+                                                        </small>
+                                                    </c:if>
+                                                </div>
                                             </td>
                                             <td><c:out value="${a.created_by_name}"/></td>
                                             <td>

@@ -9,7 +9,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Auth CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/auth.css">
@@ -103,29 +103,66 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="reg-scode">Mã sinh viên</label>
+                        <label class="form-label" for="reg-scode">Mã sinh viên (*)</label>
                         <div class="input-wrapper">
                             <i class="bi bi-upc-scan input-icon"></i>
                             <input id="reg-scode" type="text" name="student_code" class="form-input"
-                                   value="${student_code}" placeholder="SE180001, QE200035..." />
+                                   value="${student_code}" placeholder="SE180001, QE200035..." required />
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="reg-class">Lớp học</label>
+                    <label class="form-label" for="reg-class">Lớp học (*)</label>
                     <div class="input-wrapper">
                         <i class="bi bi-building input-icon"></i>
-                        <select id="reg-class" name="class_id" class="form-input" style="padding-left:42px; cursor:pointer">
+                        <select id="reg-class" name="class_id" class="form-input" style="padding-left:42px; cursor:pointer" required>
                             <option value="">-- Chọn lớp học --</option>
-                            <option value="1">SE1801 — Kỹ thuật Phần mềm 1801</option>
-                            <option value="2">SE1802 — Kỹ thuật Phần mềm 1802</option>
-                            <option value="3">IA1701 — An toàn Thông tin 1701</option>
+                            <option value="1">SE1801 — Java Web Application Development</option>
+                            <option value="2">SE1802 — Data Structures and Algorithms</option>
+                            <option value="3">AI1701 — Internet of Things</option>
                         </select>
                     </div>
                 </div>
 
-                <button id="btn-register" type="submit" class="btn-submit" style="margin-top:6px">
+                <!-- Môn học đăng ký trong kỳ (Chọn nhiều môn, mặc định cả 5 môn) -->
+                <div class="form-group" style="margin-top: 10px;">
+                    <label class="form-label">
+                        <i class="bi bi-journal-bookmark-fill"></i> Môn học đăng ký trong kỳ (*)
+                    </label>
+                    <div class="course-checkbox-container">
+                        <label class="course-check-item">
+                            <input type="checkbox" name="course_codes" value="IOT102" checked>
+                            <span class="course-code-badge">IOT102</span>
+                            <span class="course-name-text">Internet of Things</span>
+                        </label>
+                        <label class="course-check-item">
+                            <input type="checkbox" name="course_codes" value="PRJ301" checked>
+                            <span class="course-code-badge">PRJ301</span>
+                            <span class="course-name-text">Java Web Application Development</span>
+                        </label>
+                        <label class="course-check-item">
+                            <input type="checkbox" name="course_codes" value="SWR302" checked>
+                            <span class="course-code-badge">SWR302</span>
+                            <span class="course-name-text">Software Requirements</span>
+                        </label>
+                        <label class="course-check-item">
+                            <input type="checkbox" name="course_codes" value="JPD123" checked>
+                            <span class="course-code-badge">JPD123</span>
+                            <span class="course-name-text">Elementary Japanese 1</span>
+                        </label>
+                        <label class="course-check-item">
+                            <input type="checkbox" name="course_codes" value="CSD201" checked>
+                            <span class="course-code-badge">CSD201</span>
+                            <span class="course-name-text">Data Structures and Algorithms</span>
+                        </label>
+                    </div>
+                    <span class="field-hint" style="display:block; margin-top:6px; font-size:12px; color:var(--text-subtle);">
+                        <i class="bi bi-info-circle"></i> Mặc định đã chọn cả 5 môn học kỳ này. Bạn có thể chọn nhiều môn học cùng lúc.
+                    </span>
+                </div>
+
+                <button id="btn-register" type="submit" class="btn-submit" style="margin-top:12px">
                     <span class="spinner"></span>
                     <span>Đăng ký</span>
                 </button>

@@ -25,7 +25,6 @@
             <div class="page-header-row">
                 <div class="page-header-text">
                     <h1>Danh sách Lớp học phụ trách</h1>
-                    <p>Theo dõi các lớp học phần, sĩ số sinh viên và tình hình giải đáp của AI Tutor 24/7.</p>
                 </div>
                 <div class="page-header-actions">
                     <button type="button" class="btn btn-primary" onclick="alert('Tính năng Tạo Lớp học mới sẽ mở trong kỳ học tiếp theo!');">

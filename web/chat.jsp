@@ -71,7 +71,6 @@
                             </div>
                             <div>
                                 <h2>AITA AI Tutor 24/7</h2>
-                                <p>Sẵn sàng hướng dẫn lập trình Java, Servlet, JSP & CSDL SQL Server</p>
                             </div>
                         </div>
                         <div class="chat-header-actions">

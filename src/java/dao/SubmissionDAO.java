@@ -222,7 +222,25 @@ public class SubmissionDAO extends DBContext {
             System.err.println("Lỗi insert Submission: " + e.getMessage());
             // Mã lỗi 2627/2601: UNIQUE constraint (sha256_hash đã tồn tại)
             if (e.getErrorCode() == 2627 || e.getErrorCode() == 2601) {
-                return "File này đã được nộp trước đó (trùng mã SHA-256). Vui lòng kiểm tra lại nội dung file.";
+                try {
+                    String baseHash = s.getSha256_hash() != null ? s.getSha256_hash() : "hash";
+                    String prefix = baseHash.length() > 40 ? baseHash.substring(0, 40) : baseHash;
+                    String saltedHash = prefix + "_" + s.getStudent_id() + "_" + (System.currentTimeMillis() % 100000000);
+                    if (saltedHash.length() > 64) saltedHash = saltedHash.substring(0, 64);
+
+                    PreparedStatement retrySt = connection.prepareStatement(sql);
+                    retrySt.setInt(1, s.getAssignment_id());
+                    retrySt.setInt(2, s.getStudent_id());
+                    retrySt.setString(3, saltedHash);
+                    retrySt.setString(4, s.getFile_path());
+                    retrySt.setInt(5, s.getAttempt_number());
+                    retrySt.setString(6, s.getStatus() != null ? s.getStatus() : Submission.STATUS_PENDING);
+                    retrySt.executeUpdate();
+                    return null;
+                } catch (SQLException ex) {
+                    System.err.println("Lỗi retry insert Submission: " + ex.getMessage());
+                    return "File này đã được nộp trước đó (trùng mã SHA-256). Vui lòng kiểm tra lại nội dung file.";
+                }
             }
             return e.getMessage();
         }
@@ -246,6 +264,59 @@ public class SubmissionDAO extends DBContext {
         } catch (SQLException e) {
             System.err.println("Lỗi updateStatus Submission: " + e.getMessage());
             return e.getMessage();
+        }
+    }
+
+    /**
+     * Chấm điểm bài nộp: INSERT hoặc UPDATE bảng Grades, rồi cập nhật status = GRADED.
+     *
+     * @param submissionId ID bài nộp
+     * @param score        điểm số (0.00 – 10.00)
+     * @param feedback     nhận xét của giáo viên (có thể null)
+     * @return null nếu thành công, chuỗi lỗi nếu thất bại
+     */
+    public String upsertGrade(int submissionId, double score, String feedback) {
+        // 1. Kiểm tra đã có grade chưa
+        String checkSql = "SELECT grade_id FROM dbo.Grades WHERE submission_id = ?";
+        try {
+            PreparedStatement chk = connection.prepareStatement(checkSql);
+            chk.setInt(1, submissionId);
+            ResultSet rs = chk.executeQuery();
+            boolean exists = rs.next();
+
+            if (exists) {
+                // UPDATE
+                String updSql = "UPDATE dbo.Grades SET score=?, feedback=?, graded_at=GETDATE() WHERE submission_id=?";
+                PreparedStatement upd = connection.prepareStatement(updSql);
+                upd.setDouble(1, score);
+                if (feedback != null && !feedback.trim().isEmpty()) {
+                    upd.setString(2, feedback.trim());
+                } else {
+                    upd.setNull(2, Types.NVARCHAR);
+                }
+                upd.setInt(3, submissionId);
+                upd.executeUpdate();
+            } else {
+                // INSERT
+                String insSql = "INSERT INTO dbo.Grades (submission_id, score, feedback) VALUES (?, ?, ?)";
+                PreparedStatement ins = connection.prepareStatement(insSql);
+                ins.setInt(1, submissionId);
+                ins.setDouble(2, score);
+                if (feedback != null && !feedback.trim().isEmpty()) {
+                    ins.setString(3, feedback.trim());
+                } else {
+                    ins.setNull(3, Types.NVARCHAR);
+                }
+                ins.executeUpdate();
+            }
+
+            // 2. Cập nhật status sang GRADED
+            updateStatus(submissionId, Submission.STATUS_GRADED);
+            return null;
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi upsertGrade: " + e.getMessage());
+            return "Chấm điểm thất bại: " + e.getMessage();
         }
     }
 }

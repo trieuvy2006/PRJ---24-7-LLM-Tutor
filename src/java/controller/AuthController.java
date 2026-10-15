@@ -119,8 +119,17 @@ public class AuthController extends HttpServlet {
             }
         }
 
+        String[] courseCodes = request.getParameterValues("course_codes");
+        if (courseCodes == null || courseCodes.length == 0) {
+            // Mặc định sinh viên học cả 5 môn: IOT102, PRJ301, SWR302, JPD123, CSD201
+            courseCodes = new String[]{"IOT102", "PRJ301", "SWR302", "JPD123", "CSD201"};
+        }
+
         try {
             User newUser = authService.register(username, password, fullName, email, phone, studentCode, classId);
+            // Ghi danh các môn học đã chọn
+            authService.enrollStudentCourses(newUser.getUser_id(), courseCodes);
+
             HttpSession session = request.getSession(true);
             session.setAttribute("currentUser", newUser);
             session.setAttribute("role", newUser.getRole_name());

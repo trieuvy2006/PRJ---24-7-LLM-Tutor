@@ -77,10 +77,21 @@ public class ClassRoom {
     }
 
     public String getRoom() {
-        return room != null ? room : "P.302 (Tòa Alpha)";
+        return room != null ? room : "Phòng 302";
     }
 
     public void setRoom(String room) {
         this.room = room;
+    }
+
+    /**
+     * Kiểm tra số phòng hợp lệ:
+     * Dãy phòng từ: 201-220, 301-320, 401-420, 501-520. Không có Alpha/Beta.
+     */
+    public static boolean isValidRoom(int roomNumber) {
+        return (roomNumber >= 201 && roomNumber <= 220)
+            || (roomNumber >= 301 && roomNumber <= 320)
+            || (roomNumber >= 401 && roomNumber <= 420)
+            || (roomNumber >= 501 && roomNumber <= 520);
     }
 }

@@ -31,7 +31,6 @@
                     </div>
                     <div class="page-header-text">
                         <h1>Chỉnh sửa: <c:out value="${u.username}" /></h1>
-                        <p>Cập nhật vai trò, email và thông tin cá nhân của người dùng #${u.user_id}.</p>
                     </div>
                 </div>
                 <div class="page-header-actions">

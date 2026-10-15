@@ -81,7 +81,7 @@ public class AuthService {
         if (studentCode != null && !studentCode.trim().isEmpty()) {
             studentCode = studentCode.trim().toUpperCase();
         } else {
-            studentCode = null;
+            throw new IllegalArgumentException("Mã sinh viên (MSSV) không được để trống. Vui lòng nhập mã sinh viên của bạn.");
         }
 
         // 2. Kiểm tra tài khoản đã tồn tại chưa
@@ -138,5 +138,12 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    /**
+     * Ghi danh sinh viên vào các môn học sau khi đăng ký thành công.
+     */
+    public void enrollStudentCourses(int studentId, String[] courseCodes) {
+        userDAO.enrollStudentCourses(studentId, courseCodes);
     }
 }
