@@ -12,3 +12,7 @@ target/
 .vscode/
 .idea/
 *.iml
+
+# Local configuration & sensitive keys
+aitutor.properties
+

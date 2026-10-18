@@ -132,6 +132,11 @@
                                                             <i class="bi bi-chat-left-text-fill"></i> Xem
                                                         </button>
                                                     </c:when>
+                                                    <c:when test="${sub.status eq 'FAILED'}">
+                                                        <a href="${pageContext.request.contextPath}/chat" class="btn btn-primary btn-sm" style="background:#ef4444; border-color:#ef4444;" title="Nhờ AI Tutor phân tích và sửa lỗi">
+                                                            <i class="bi bi-robot"></i> Hỏi AI sửa lỗi
+                                                        </a>
+                                                    </c:when>
                                                     <c:otherwise>
                                                         <span class="text-subtle">Chưa có</span>
                                                     </c:otherwise>

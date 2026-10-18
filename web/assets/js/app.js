@@ -320,6 +320,8 @@
 
     const question = input.value.trim();
     if (!question) return;
+    if (input.dataset.sending === 'true') return;
+    input.dataset.sending = 'true';
 
     // Hide suggestions once chat starts
     if (suggestions) suggestions.style.display = 'none';
@@ -329,7 +331,7 @@
       <div class="chat-message user-message">
         <div class="message-avatar">U</div>
         <div class="message-content">
-          <div class="message-author">Bạn <span class="message-time">Vừa xong</span></div>
+          <div class="message-author">B&#7841;n <span class="message-time">V&#7915;a xong</span></div>
           <div class="message-bubble">${escapeHtml(question)}</div>
         </div>
       </div>
@@ -339,16 +341,16 @@
     input.style.height = 'auto';
     container.scrollTop = container.scrollHeight;
 
-    // 2. Simulate AI Typing Indicator
+    // 2. Hiển thị Trạng thái AI Typing Indicator
     const typingId = 'typing-' + Date.now();
     const typingHtml = `
       <div class="chat-message ai-message" id="${typingId}">
         <div class="message-avatar"><i class="bi bi-robot"></i></div>
         <div class="message-content">
-          <div class="message-author">AITA AI Tutor <span class="message-time">Đang suy nghĩ...</span></div>
+          <div class="message-author">AITA AI Tutor <span class="message-time">&#272;ang suy ngh&#297;...</span></div>
           <div class="message-bubble" style="display:flex; align-items:center; gap:6px; color:var(--text-subtle)">
             <span class="status-dot-pulse"></span>
-            <span>Đang tra cứu cơ sở tri thức và soạn câu trả lời sư phạm...</span>
+            <span>&#272;ang ph&#226;n t&#237;ch ng&#7919; c&#7843;nh h&#7897;i tho&#7841;i v&#224; chu&#7849;n b&#7883; c&#226;u tr&#7843; l&#7901;i...</span>
           </div>
         </div>
       </div>
@@ -356,43 +358,45 @@
     container.insertAdjacentHTML('beforeend', typingHtml);
     container.scrollTop = container.scrollHeight;
 
-    // 3. Simulated AI Pedagogical Response
-    setTimeout(function () {
+    // 3. Gửi Request AJAX tới ChatServlet (/chat)
+    const formData = new URLSearchParams();
+    formData.append('message', question);
+    formData.append('sessionId', container.dataset.sessionId || '');
+
+    fetch((window.AITA_CONTEXT_PATH || '') + 'chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+      },
+      body: formData.toString()
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Lỗi máy chủ: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(data => {
       const typingEl = document.getElementById(typingId);
       if (typingEl) typingEl.remove();
 
-      let answerHtml = '';
-      const qLower = question.toLowerCase();
+      if (data.sessionId && container) {
+        container.dataset.sessionId = data.sessionId;
+      }
 
-      if (qLower.includes('vòng đời') || qLower.includes('lifecycle') || qLower.includes('httpservlet')) {
-        answerHtml = `
-          <p>Tuyệt vời! Vòng đời của một <strong>HttpServlet</strong> trong Java Web gồm 3 giai đoạn then chốt:</p>
-          <ol>
-            <li><strong>Khởi tạo (<code>init()</code>):</strong> Chỉ được gọi duy nhất một lần khi Servlet được nạp vào bộ nhớ bởi Web Container (Tomcat). Dùng để kết nối tài nguyên hoặc cấu hình ban đầu.</li>
-            <li><strong>Phục vụ yêu cầu (<code>service()</code>):</strong> Được gọi mỗi khi có client gửi request. Phương thức này sẽ phân tích HTTP Method để gọi tiếp <code>doGet()</code> hoặc <code>doPost()</code>.</li>
-            <li><strong>Hủy giải phóng (<code>destroy()</code>):</strong> Được gọi một lần trước khi Servlet bị dỡ bỏ hoặc server dừng, dùng để đóng kết nối CSDL và giải phóng bộ nhớ.</li>
-          </ol>
-          <p>💡 <em>Gợi ý thực hành:</em> Bạn có thể đặt <code>System.out.println("init called")</code> vào Servlet trong dự án AITA để quan sát console khi ứng dụng khởi chạy!</p>
-        `;
-      } else if (qLower.includes('lỗi') || qLower.includes('nullpointer') || qLower.includes('500')) {
-        answerHtml = `
-          <p>Đối với lỗi <code>NullPointerException</code> hoặc HTTP Status 500 trong ứng dụng Servlet/JSP, nguyên nhân phổ biến nhất là:</p>
-          <ul>
-            <li><strong>Đọc tham số chưa tồn tại:</strong> <code>request.getParameter("key")</code> trả về <code>null</code> do tên ô <code>name="..."</code> trong form HTML không khớp với code Java.</li>
-            <li><strong>Kết nối Database chưa mở:</strong> Biến <code>connection</code> trong <code>DBContext</code> chưa kết nối thành công tới SQL Server (hãy kiểm tra user/pass SQL và cổng 1433).</li>
-            <li><strong>Đối tượng Session chưa có:</strong> Gọi <code>session.getAttribute("currentUser")</code> khi người dùng chưa đăng nhập.</li>
-          </ul>
-          <p>🔍 Bạn có thể dán đoạn stack trace lỗi hoặc đoạn code Servlet nghi vấn vào đây để tôi soi chi tiết từng dòng nhé!</p>
-        `;
-      } else {
-        answerHtml = `
-          <p>Tôi đã tiếp nhận câu hỏi của bạn về: <em>"${escapeHtml(question)}"</em>.</p>
-          <p>✨ <strong>Hướng tiếp cận giải quyết:</strong></p>
-          <ul>
-            <li>Xác định vai trò của thành phần theo mô hình <strong>MVC2</strong>: Dữ liệu (Model), Giao diện hiển thị (JSP/JSTL), hay Luồng điều hướng (Servlet Controller).</li>
-            <li>Đảm bảo mã nguồn tuân thủ nguyên tắc đóng gói (Encapsulation) và kiểm tra kỹ các ràng buộc khóa ngoại trong CSDL <code>AITA_DB</code>.</li>
-          </ul>
-          <p>🚀 <em>Lưu ý:</em> Mô hình AI LLM Engine trực tiếp đang được kết nối với Gemini/GPT-4o. Hiện tại hệ thống đang chạy chế độ mô phỏng phản hồi gia sư.</p>
+      let bannerHtml = '';
+      if (data.detectedTopic) {
+        bannerHtml = `
+          <div style="margin-top: 10px; padding: 10px 14px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; font-size: 0.85rem;">
+            <i class="bi bi-signpost-split-fill" style="color: #6366f1;"></i> 
+            <strong>L&#7897; tr&#236;nh h&#7885;c t&#7853;p &#273;&#227; c&#7853;p nh&#7853;t:</strong> 
+            <span style="color: #818cf8;">${escapeHtml(data.detectedTopic)}</span>
+            <div style="margin-top: 4px;">
+              <a href="${(window.AITA_CONTEXT_PATH || '')}learning-path" style="color: #38bdf8; text-decoration: underline; font-weight: 500;">
+                <i class="bi bi-arrow-right-short"></i> Xem l&#7897; tr&#236;nh c&#225; nh&#226;n h&#243;a c&#7911;a b&#7841;n
+              </a>
+            </div>
+          </div>
         `;
       }
 
@@ -400,14 +404,38 @@
         <div class="chat-message ai-message">
           <div class="message-avatar"><i class="bi bi-robot"></i></div>
           <div class="message-content">
-            <div class="message-author">AITA AI Tutor <span class="message-time">Vừa xong</span></div>
-            <div class="message-bubble">${answerHtml}</div>
+            <div class="message-author">AITA AI Tutor <span class="message-time">V&#7915;a xong</span></div>
+            <div class="message-bubble">
+              ${data.answerHtml}
+              ${bannerHtml}
+            </div>
           </div>
         </div>
       `;
       container.insertAdjacentHTML('beforeend', aiMsgHtml);
       container.scrollTop = container.scrollHeight;
-    }, 1200);
+    })
+    .catch(err => {
+      const typingEl = document.getElementById(typingId);
+      if (typingEl) typingEl.remove();
+
+      const errMsgHtml = `
+        <div class="chat-message ai-message">
+          <div class="message-avatar"><i class="bi bi-exclamation-triangle-fill" style="color:#ef4444"></i></div>
+          <div class="message-content">
+            <div class="message-author">H&#7879; th&#7889;ng <span class="message-time">V&#7915;a xong</span></div>
+            <div class="message-bubble" style="border-left: 3px solid #ef4444;">
+              Kh&#244;ng th&#7875; k&#7871;t n&#7889;i v&#7899;i d&#7883;ch v&#7909; AI Tutor. Vui l&#242;ng ki&#7875;m tra m&#7841;ng ho&#7863;c th&#7917; l&#7841;i sau.
+            </div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', errMsgHtml);
+      container.scrollTop = container.scrollHeight;
+    })
+    .finally(() => {
+      input.dataset.sending = 'false';
+    });
   };
 
   function escapeHtml(str) {
@@ -474,19 +502,96 @@
       });
     }
 
-    // Clear chat button
-    const clearChatBtn = document.getElementById('btnClearChat');
-    if (clearChatBtn) {
-      clearChatBtn.addEventListener('click', function () {
-        const container = document.getElementById('chatMessagesContainer');
-        const suggestions = document.getElementById('quickSuggestions');
-        if (container) {
-          const messages = container.querySelectorAll('.chat-message:not(:first-child)');
-          messages.forEach(m => m.remove());
+    // File attachment handler (Đính kèm file code trực tiếp)
+    const attachBtn = document.getElementById('btnAttachFile');
+    const fileInput = document.getElementById('chatFileInput');
+    if (attachBtn && fileInput) {
+      attachBtn.addEventListener('click', function () {
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', function () {
+        if (!this.files || this.files.length === 0) return;
+        const file = this.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+          window.alert('File quá lớn (tối đa 2MB).');
+          return;
         }
-        if (suggestions) suggestions.style.display = 'flex';
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const content = e.target.result;
+          if (chatInput) {
+            const prefix = `[File: ${file.name}]\n`;
+            chatInput.value = (chatInput.value ? chatInput.value + '\n\n' : '') + prefix + content;
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 180) + 'px';
+            chatInput.focus();
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+        this.value = '';
       });
     }
+
+  // Delete chat session
+  window.deleteChatSession = function (sessionId, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!window.confirm('Bạn có chắc chắn muốn xóa cuộc trò chuyện này khỏi lịch sử?')) return;
+
+    fetch((window.AITA_CONTEXT_PATH || '') + 'chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+      body: new URLSearchParams({ action: 'deleteSession', sessionId: sessionId }).toString()
+    })
+    .then(response => response.ok ? response.json() : Promise.reject(new Error('delete failed')))
+    .then(data => {
+      if (data.status === 'success') {
+        const container = document.getElementById('chatMessagesContainer');
+        if (container && container.dataset.sessionId == sessionId) {
+          window.location.href = (window.AITA_CONTEXT_PATH || '') + 'chat';
+        } else {
+          window.location.reload();
+        }
+      } else {
+        window.alert(data.message || 'Không thể xóa cuộc trò chuyện.');
+      }
+    })
+    .catch(() => {
+      window.alert('Không thể kết nối máy chủ để xóa cuộc trò chuyện.');
+    });
+  };
+
+  // Clear chat / New chat buttons
+  function initNewChatButtons() {
+    const triggerNewChat = function () {
+      const btn = this;
+      if (btn.dataset.creating === 'true') return;
+      btn.dataset.creating = 'true';
+      fetch((window.AITA_CONTEXT_PATH || '') + 'chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({ action: 'newSession' }).toString()
+      })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('new session failed')))
+      .then(data => {
+        if (!data.sessionId) throw new Error('missing session id');
+        window.location.href = (window.AITA_CONTEXT_PATH || '') + 'chat?sessionId=' + encodeURIComponent(data.sessionId);
+      })
+      .catch(() => {
+        btn.dataset.creating = 'false';
+        window.alert('Không thể tạo cuộc trò chuyện mới. Vui lòng thử lại.');
+      });
+    };
+
+    const clearChatBtn = document.getElementById('btnClearChat');
+    if (clearChatBtn) clearChatBtn.addEventListener('click', triggerNewChat);
+
+    const newChatBtn = document.getElementById('btnNewChat');
+    if (newChatBtn) newChatBtn.addEventListener('click', triggerNewChat);
+  }
+  initNewChatButtons();
 
     // Close mobile sidebar on backdrop click
     document.addEventListener('click', function (e) {

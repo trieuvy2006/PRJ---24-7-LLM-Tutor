@@ -19,6 +19,7 @@
             <span>
                 <c:choose>
                     <c:when test="${pageContext.request.servletPath eq '/chat.jsp'}">AI Tutor Chatbot 24/7</c:when>
+                    <c:when test="${pageContext.request.servletPath eq '/WEB-INF/views/learning_path.jsp'}">Lộ trình Học tập Cá nhân hóa</c:when>
                     <c:when test="${pageContext.request.servletPath eq '/classes.jsp'}">Lớp học phụ trách</c:when>
                     <c:when test="${pageContext.request.servletPath eq '/profile.jsp'}">Hồ sơ cá nhân & Tài khoản</c:when>
                     <c:when test="${pageContext.request.servletPath eq '/add.jsp'}">Thêm người dùng</c:when>
