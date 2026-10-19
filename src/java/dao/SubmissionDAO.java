@@ -176,6 +176,34 @@ public class SubmissionDAO extends DBContext {
     }
 
     /**
+     * Lấy chi tiết bài nộp theo ID (kèm thông tin sinh viên, môn học, điểm số).
+     */
+    public Submission getById(int submissionId) {
+        String sql = "SELECT s.submission_id, s.assignment_id, s.student_id, s.sha256_hash, "
+                   + "       s.file_path, s.attempt_number, s.submitted_at, s.status, "
+                   + "       u.full_name AS student_name, u.student_code, "
+                   + "       a.title AS assignment_title, c.course_code, "
+                   + "       g.score, g.feedback "
+                   + "FROM dbo.Submissions s "
+                   + "JOIN dbo.Users u          ON s.student_id    = u.user_id "
+                   + "JOIN dbo.Assignments a     ON s.assignment_id = a.assignment_id "
+                   + "JOIN dbo.Courses c         ON a.course_id     = c.course_id "
+                   + "LEFT JOIN dbo.Grades g     ON s.submission_id = g.submission_id "
+                   + "WHERE s.submission_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, submissionId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return mapRowToSubmission(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getById Submission: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
      * Đếm số lần đã nộp (attempt) của một sinh viên cho một bài tập.
      *
      * @param assignmentId ID bài tập

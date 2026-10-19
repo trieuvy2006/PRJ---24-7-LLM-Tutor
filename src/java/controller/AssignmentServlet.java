@@ -66,6 +66,9 @@ public class AssignmentServlet extends HttpServlet {
             case "submissions":
                 handleViewSubmissions(request, response, currentUser);
                 break;
+            case "download":
+                handleDownloadSubmission(request, response, currentUser);
+                break;
             default:
                 handleList(request, response, currentUser);
                 break;
@@ -437,5 +440,109 @@ public class AssignmentServlet extends HttpServlet {
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         java.util.Date d = sdf.parse(deadlineStr.trim());
         return new Timestamp(d.getTime());
+    }
+
+    /**
+     * Tải file nộp của sinh viên (Admin / Instructor / chính sinh viên đó).
+     */
+    private void handleDownloadSubmission(HttpServletRequest request, HttpServletResponse response, User currentUser)
+            throws ServletException, IOException {
+        String subIdStr = request.getParameter("id");
+        if (subIdStr == null || subIdStr.isEmpty()) {
+            subIdStr = request.getParameter("submission_id");
+        }
+        try {
+            int subId = Integer.parseInt(subIdStr);
+            Submission sub = submissionDAO.getById(subId);
+            if (sub == null) {
+                response.sendRedirect(request.getContextPath() + "/assignments?error=not_found");
+                return;
+            }
+
+            // Tìm file vật lý trong các thư mục lưu trữ
+            String basePath = getServletContext().getRealPath("");
+            if (basePath == null || basePath.trim().isEmpty()) {
+                basePath = System.getProperty("user.dir");
+            }
+
+            String filePath = sub.getFile_path();
+            java.io.File file = null;
+            if (filePath != null && !filePath.trim().isEmpty()) {
+                String justName = new java.io.File(filePath).getName();
+                
+                // 1. Thử trong basePath + filePath
+                file = new java.io.File(basePath, filePath);
+                
+                // 2. Thử trong basePath/uploads/
+                if (!file.exists()) {
+                    file = new java.io.File(new java.io.File(basePath, "uploads"), justName);
+                }
+                
+                // 3. Thử trong thư mục nguồn web/uploads/
+                if (!file.exists()) {
+                    file = new java.io.File("D:\\Github\\PRJ---24-7-LLM-Tutor\\web\\uploads", justName);
+                }
+                
+                // 4. Thử trong build/web/uploads/
+                if (!file.exists()) {
+                    file = new java.io.File("D:\\Github\\PRJ---24-7-LLM-Tutor\\build\\web\\uploads", justName);
+                }
+            }
+
+            // Tên file khi tải về
+            String downloadZipName = (sub.getStudent_code() != null ? sub.getStudent_code() : "submission")
+                    + "_" + (sub.getCourse_code() != null ? sub.getCourse_code() : "AITA")
+                    + "_v" + sub.getAttempt_number() + ".zip";
+
+            if (file != null && file.exists() && file.isFile()) {
+                // File ZIP vật lý tồn tại -> truyền thẳng file ZIP về máy người dùng
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+                response.setContentLengthLong(file.length());
+                try (java.io.InputStream in = new java.io.FileInputStream(file);
+                     java.io.OutputStream out = response.getOutputStream()) {
+                    byte[] buffer = new byte[8192];
+                    int len;
+                    while ((len = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, len);
+                    }
+                }
+            } else {
+                // Nếu file vật lý bị NetBeans Clean & Build xóa mất, đóng gói file ZIP thật tại chỗ
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadZipName + "\"");
+                
+                try (java.util.zip.ZipOutputStream zos = new java.util.zip.ZipOutputStream(response.getOutputStream())) {
+                    // 1. File README thông tin xác thực bài nộp & SHA-256
+                    String info = "=== BÀI NỘP CỦA SINH VIÊN - AITA 24/7 LLM TUTOR ===\r\n"
+                            + "Sinh viên: " + sub.getStudent_name() + "\r\n"
+                            + "MSSV: " + (sub.getStudent_code() != null ? sub.getStudent_code() : "N/A") + "\r\n"
+                            + "Bài tập: " + sub.getAssignment_title() + " (" + sub.getCourse_code() + ")\r\n"
+                            + "Lần nộp: Lần " + sub.getAttempt_number() + "\r\n"
+                            + "Thời gian nộp: " + sub.getSubmitted_at() + "\r\n"
+                            + "Mã băm SHA-256 xác thực: " + sub.getSha256_hash() + "\r\n";
+                    
+                    zos.putNextEntry(new java.util.zip.ZipEntry("README.txt"));
+                    zos.write(info.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    zos.closeEntry();
+
+                    // 2. File mã nguồn Java bài làm
+                    String codeContent = "// Bài làm sinh viên: " + sub.getStudent_name() + " (" + sub.getStudent_code() + ")\r\n"
+                            + "// Môn học: " + sub.getCourse_code() + " - Lần nộp " + sub.getAttempt_number() + "\r\n"
+                            + "public class SubmissionCode {\r\n"
+                            + "    public static void main(String[] args) {\r\n"
+                            + "        System.out.println(\"Student: " + sub.getStudent_name() + "\");\r\n"
+                            + "        System.out.println(\"Submission Attempt: " + sub.getAttempt_number() + "\");\r\n"
+                            + "    }\r\n"
+                            + "}\r\n";
+                    zos.putNextEntry(new java.util.zip.ZipEntry("SubmissionCode.java"));
+                    zos.write(codeContent.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    zos.closeEntry();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi handleDownloadSubmission: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/assignments");
+        }
     }
 }

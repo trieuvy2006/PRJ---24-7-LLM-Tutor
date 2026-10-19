@@ -111,16 +111,18 @@ public class ChatServlet extends HttpServlet {
         tutorDAO.saveMessage(sessionId, "STUDENT", userMessage.trim());
 
         // 2. Chuyển qua AI Tutor Service phân tích lỗi sư phạm & cập nhật Lộ trình học tập
+        //    Chỉ ghi nhận learning path cho Sinh viên (role_id == 3), Admin/Giảng viên không tạo lộ trình
         List<TutorMessage> conversation = tutorDAO.getMessagesBySession(sessionId);
-        AiTutorService.AiResponse aiRes = aiTutorService.processStudentInquiry(currentUser.getUser_id(), userMessage.trim(), conversation);
+        int studentIdForPath = (currentUser.getRole_id() == 3) ? currentUser.getUser_id() : 0;
+        AiTutorService.AiResponse aiRes = aiTutorService.processStudentInquiry(studentIdForPath, userMessage.trim(), conversation);
 
         // 3. Lưu câu trả lời của AI Tutor vào Database
         tutorDAO.saveMessage(sessionId, "LLM_TUTOR", aiRes.getAnswerHtml());
 
-        // 4. Trả về JSON cho giao diện người dùng
+        // 4. Trả về JSON cho giao diện người dùng (chỉ trả về detectedTopic khi là Sinh viên)
         String jsonAnswer = escapeJson(aiRes.getAnswerHtml());
-        String jsonTopic = aiRes.getDetectedTopic() != null ? escapeJson(aiRes.getDetectedTopic()) : "";
-        String jsonAction = aiRes.getRecommendedAction() != null ? escapeJson(aiRes.getRecommendedAction()) : "";
+        String jsonTopic = (currentUser.getRole_id() == 3 && aiRes.getDetectedTopic() != null) ? escapeJson(aiRes.getDetectedTopic()) : "";
+        String jsonAction = (currentUser.getRole_id() == 3 && aiRes.getRecommendedAction() != null) ? escapeJson(aiRes.getRecommendedAction()) : "";
 
         out.print("{"
                 + "\"status\":\"success\","

@@ -52,6 +52,7 @@ public class LearningPathDAO extends DBContext {
                    + "u.full_name, u.student_code "
                    + "FROM Personalized_Learning_Paths p "
                    + "JOIN Users u ON p.student_id = u.user_id "
+                   + "WHERE u.role_id = 3 "
                    + "ORDER BY p.created_at DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -75,24 +76,67 @@ public class LearningPathDAO extends DBContext {
     }
 
     /**
+     * So sánh xem 2 chủ đề có tương đồng (trùng lặp ý) hay không.
+     * Ví dụ: "Xử lý điều kiện biên trong Doubly Linked List" và "Xử lý điều kiện biên và con trỏ trong Doubly Linked List"
+     */
+    private boolean isSimilarTopic(String t1, String t2) {
+        if (t1 == null || t2 == null) return false;
+        String s1 = t1.toLowerCase().trim();
+        String s2 = t2.toLowerCase().trim();
+        if (s1.equals(s2) || s1.contains(s2) || s2.contains(s1)) {
+            return true;
+        }
+        String[] words1 = s1.split("\\s+");
+        String[] words2 = s2.split("\\s+");
+        int matchCount = 0;
+        int meaningfulWords = 0;
+        for (String w1 : words1) {
+            if (w1.length() <= 2) continue; // Bỏ qua từ đệm như và, ở, in, on...
+            meaningfulWords++;
+            for (String w2 : words2) {
+                if (w1.equals(w2)) {
+                    matchCount++;
+                    break;
+                }
+            }
+        }
+        return meaningfulWords > 0 && ((double) matchCount / meaningfulWords) >= 0.6;
+    }
+
+    /**
      * Thêm một mục điểm yếu mới do AI Tutor phát hiện vào lộ trình của sinh viên.
-     * Nếu chủ đề đã tồn tại ở trạng thái IN_PROGRESS thì chỉ cập nhật thời gian hoặc bỏ qua.
+     * Nếu chủ đề đã tồn tại ở trạng thái IN_PROGRESS thì chỉ cập nhật hành động mới nhất.
+     * Nếu sinh viên đã hoàn thành (COMPLETED) chủ đề tương tự thì không tự ý tạo lại để tránh làm phiền.
      */
     public boolean addLearningPath(int studentId, String weaknessTopic, String recommendedAction) {
-        // Kiểm tra xem đã tồn tại chủ đề này chưa
-        String checkSql = "SELECT path_id FROM Personalized_Learning_Paths "
-                        + "WHERE student_id = ? AND weakness_topic = ? AND status = 'IN_PROGRESS'";
+        if (weaknessTopic == null || weaknessTopic.trim().isEmpty()) return false;
+        String cleanTopic = weaknessTopic.replaceAll("\\s+", " ").trim();
+
+        // Kiểm tra xem đã tồn tại chủ đề tương tự chưa
+        String checkSql = "SELECT path_id, weakness_topic, status FROM Personalized_Learning_Paths "
+                        + "WHERE student_id = ? "
+                        + "ORDER BY created_at DESC";
         try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
             checkPs.setInt(1, studentId);
-            checkPs.setString(2, weaknessTopic);
             try (ResultSet rs = checkPs.executeQuery()) {
-                if (rs.next()) {
-                    // Đã tồn tại mục này đang học -> cập nhật lại hành động mới nhất
-                    String updateSql = "UPDATE Personalized_Learning_Paths SET recommended_action = ?, created_at = GETDATE() WHERE path_id = ?";
-                    try (PreparedStatement upPs = connection.prepareStatement(updateSql)) {
-                        upPs.setString(1, recommendedAction);
-                        upPs.setInt(2, rs.getInt("path_id"));
-                        return upPs.executeUpdate() > 0;
+                while (rs.next()) {
+                    String existingTopic = rs.getString("weakness_topic");
+                    String status = rs.getString("status");
+                    int pathId = rs.getInt("path_id");
+
+                    if (isSimilarTopic(cleanTopic, existingTopic)) {
+                        if ("IN_PROGRESS".equalsIgnoreCase(status)) {
+                            // Đã tồn tại mục đang học -> chỉ cập nhật hành động mới nhất
+                            String updateSql = "UPDATE Personalized_Learning_Paths SET recommended_action = ?, created_at = GETDATE() WHERE path_id = ?";
+                            try (PreparedStatement upPs = connection.prepareStatement(updateSql)) {
+                                upPs.setString(1, recommendedAction);
+                                upPs.setInt(2, pathId);
+                                return upPs.executeUpdate() > 0;
+                            }
+                        } else if ("COMPLETED".equalsIgnoreCase(status)) {
+                            // Đã hoàn thành mục tương tự trước đó -> không tự động spam lại mục mới
+                            return false;
+                        }
                     }
                 }
             }
@@ -100,12 +144,12 @@ public class LearningPathDAO extends DBContext {
             e.printStackTrace();
         }
 
-        // Nếu chưa có, thêm mới
+        // Nếu chưa có chủ đề tương tự, thêm mới
         String insertSql = "INSERT INTO Personalized_Learning_Paths (student_id, weakness_topic, recommended_action, status, created_at) "
                          + "VALUES (?, ?, ?, 'IN_PROGRESS', GETDATE())";
         try (PreparedStatement ps = connection.prepareStatement(insertSql)) {
             ps.setInt(1, studentId);
-            ps.setString(2, weaknessTopic);
+            ps.setString(2, cleanTopic);
             ps.setString(3, recommendedAction);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

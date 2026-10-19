@@ -232,6 +232,16 @@ public class SubmissionServlet extends HttpServlet {
                 sb.append(String.format("%02x", b));
             }
             sha256 = sb.toString();
+
+            // Lưu thêm một bản vào thư mục nguồn web/uploads để NetBeans Clean & Build không làm mất file
+            try {
+                File sourceUploadDir = new File("D:\\Github\\PRJ---24-7-LLM-Tutor\\web\\uploads");
+                if (!sourceUploadDir.exists()) sourceUploadDir.mkdirs();
+                File permanentFile = new File(sourceUploadDir, savedFileName);
+                java.nio.file.Files.copy(destFile.toPath(), permanentFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception ex) {
+                System.err.println("Notice backup upload: " + ex.getMessage());
+            }
         } catch (NoSuchAlgorithmException | IOException e) {
             request.setAttribute("error", "Lỗi lưu file bài làm: " + e.getMessage());
             request.setAttribute("assignment", assignment);

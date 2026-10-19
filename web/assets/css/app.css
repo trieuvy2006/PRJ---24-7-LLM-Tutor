@@ -1508,6 +1508,8 @@ body.sidebar-collapsed .nav-link {
   flex-direction: column;
   gap: 14px;
   flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .btn-new-chat {
@@ -1536,7 +1538,27 @@ body.sidebar-collapsed .nav-link {
 .chat-history-group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.chat-history-group::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chat-history-group::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-history-group::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.chat-history-group::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
 }
 
 .chat-group-title {

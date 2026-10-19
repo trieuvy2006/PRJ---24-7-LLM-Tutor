@@ -385,7 +385,7 @@
       }
 
       let bannerHtml = '';
-      if (data.detectedTopic) {
+      if (data.pathCreated && data.detectedTopic) {
         bannerHtml = `
           <div style="margin-top: 10px; padding: 10px 14px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 8px; font-size: 0.85rem;">
             <i class="bi bi-signpost-split-fill" style="color: #6366f1;"></i> 
