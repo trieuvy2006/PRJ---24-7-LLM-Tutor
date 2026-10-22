@@ -11,6 +11,7 @@ public class ClassRoom {
     private String course_code;
     private String schedule;
     private String room;
+    private int progress = 75; // Tiến độ học tập (%)
 
     public ClassRoom() {
     }
@@ -82,6 +83,14 @@ public class ClassRoom {
 
     public void setRoom(String room) {
         this.room = room;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     /**

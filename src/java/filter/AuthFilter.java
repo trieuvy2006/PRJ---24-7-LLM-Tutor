@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 @WebFilter(filterName = "AuthFilter", urlPatterns = {
     "/user", "/add", "/update", "/delete", "/profile", "/chat", "/classes",
-    "/assignments", "/submit"
+    "/assignments", "/submit", "/learning-path"
 })
 public class AuthFilter implements Filter {
 

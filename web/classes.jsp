@@ -42,7 +42,7 @@
                     </div>
                     <div class="metric-info">
                         <span class="metric-label">Lớp học phần</span>
-                        <strong class="metric-val">${requestScope.classes != null ? requestScope.classes.size() : 3} lớp</strong>
+                        <strong class="metric-val">${requestScope.classes != null ? requestScope.classes.size() : 0} lớp</strong>
                     </div>
                 </div>
 
@@ -116,18 +116,15 @@
                                     <i class="bi bi-person-fill"></i>
                                     <strong>${cls.student_count}</strong> sinh viên ghi danh
                                 </div>
-                                <span style="font-size:12px; color:var(--text-subtle)">Tiến độ: 78%</span>
+                                <span style="font-size:12px; color:var(--text-subtle)">Tiến độ: ${cls.progress}%</span>
                             </div>
 
                             <div class="class-progress-bar">
-                                <div class="class-progress-fill" style="width: 78%"></div>
+                                <div class="class-progress-fill" style="width: ${cls.progress}%"></div>
                             </div>
                         </div>
 
                         <div class="class-card-actions">
-                            <a href="${pageContext.request.contextPath}/chat" class="btn btn-secondary btn-sm" title="Kiểm tra tương tác AI">
-                                <i class="bi bi-robot"></i> Giám sát AI
-                            </a>
                             <button type="button" class="btn btn-primary btn-sm" onclick="alert('Đang mở chi tiết lớp ${cls.class_code}!');">
                                 <i class="bi bi-box-arrow-in-right"></i> Vào lớp học
                             </button>

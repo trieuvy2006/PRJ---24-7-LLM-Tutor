@@ -175,18 +175,22 @@ INSERT INTO Roles (role_name) VALUES
 INSERT INTO Classes (class_code, class_name) VALUES 
 ('SE1801', 'Java Web Application Development'),
 ('SE1802', 'Data Structures and Algorithms'),
-('AI1701', 'Internet of Things');
+('AI1701', 'Internet of Things'),
+('SE1803', 'Software Requirements Engineering'),
+('SE1804', 'Elementary Japanese Communication');
 
 -- 4.3 Bảng Users
 INSERT INTO Users (role_id, username, password_hash, full_name, email, phone, student_code, class_id) VALUES 
-(1, 'admin', 'hash_admin_123', N'Nguyễn Văn Quản Trị', 'admin@fe.edu.vn', '0901234567', NULL, NULL),
+(1, 'admin', 'hash_admin_123', N'ADMIN', 'admin@fe.edu.vn', '0901234567', NULL, NULL),
 (2, 'dungkt', 'hash_dungkt_123', N'Nguyễn Văn Dũng', 'dungkt@fe.edu.vn', '0912345678', NULL, NULL),
 (2, 'haonn', 'hash_haonn_123', N'Nguyễn Nhật Hào', 'haonn@fe.edu.vn', '0912345679', NULL, NULL),
 (3, 'duynd', 'hash_duynd_123', N'Nguyễn Đức Duy', 'duyndse180000@fpt.edu.vn', '0987654321', 'SE180000', 1),
 (3, 'vynt', 'hash_vynt_123', N'Nhật Tường Vy', 'vyntse180001@fpt.edu.vn', '0987654322', 'SE180001', 1),
 (3, 'khoana', 'hash_khoana_123', N'Nguyễn Anh Khoa', 'khoanase180002@fpt.edu.vn', '0987654323', 'SE180002', 1),
 (3, 'baov', 'hash_baov_123', N'Văn Bảo', 'baovse180003@fpt.edu.vn', '0987654324', 'SE180003', 2),
-(3, 'tuanna', 'hash_tuanna_123', N'Nguyễn Anh Tuấn', 'tuannase170001@fpt.edu.vn', '0987654325', 'AI170001', 3);
+(3, 'tuanna', 'hash_tuanna_123', N'Nguyễn Anh Tuấn', 'tuannase170001@fpt.edu.vn', '0987654325', 'AI170001', 3),
+(2, 'phuctm', 'hash_phuctm_123', N'Trần Minh Phúc', 'phuctm@fe.edu.vn', '0912345680', NULL, NULL),
+(2, 'maianhnt', 'hash_maianhnt_123', N'Nguyễn Thị Mai Anh', 'maianhnt@fe.edu.vn', '0912345681', NULL, NULL);
 
 -- 4.4 Bảng Courses (5 môn học của học kỳ)
 INSERT INTO Courses (course_code, course_name, description) VALUES 
@@ -206,10 +210,13 @@ INSERT INTO Course_Enrollments (student_id, course_id) VALUES
 
 -- 4.6 Phân công Giảng viên (Giáo viên dạy tối đa 2 môn, các lớp khác nhau, khác ca, phòng 201-220, 301-320, 401-420, 501-520)
 INSERT INTO Instructor_Courses (instructor_id, course_id, class_id, shift_name, room_number) VALUES
-(2, 2, 1, N'Ca 2 (09:30 - 11:50)', N'Phòng 302'), -- dungkt dạy PRJ301 lớp SE1801 Ca 2 Phòng 302
-(2, 5, 2, N'Ca 3 (13:00 - 15:20)', N'Phòng 204'), -- dungkt dạy CSD201 lớp SE1802 Ca 3 Phòng 204
-(3, 3, 3, N'Ca 4 (15:30 - 17:50)', N'Phòng 405'), -- haonn dạy SWR302 lớp AI1701 Ca 4 Phòng 405
-(3, 4, 1, N'Ca 1 (07:00 - 09:20)', N'Phòng 510'); -- haonn dạy JPD123 lớp SE1801 Ca 1 Phòng 510
+(2, 2, 1, N'Ca 2 (09:30 - 11:50)', N'Phòng 302'),  -- dungkt dạy PRJ301 lớp SE1801 Ca 2 Phòng 302
+(2, 5, 2, N'Ca 3 (13:00 - 15:20)', N'Phòng 204'),  -- dungkt dạy CSD201 lớp SE1802 Ca 3 Phòng 204
+(3, 1, 3, N'Ca 4 (15:30 - 17:50)', N'Phòng 405'),  -- haonn dạy IOT102 lớp AI1701 Ca 4 Phòng 405
+(9, 3, 4, N'Ca 1 (07:00 - 09:20)', N'Phòng 301'),  -- phuctm dạy SWR302 lớp SE1803 Ca 1 Phòng 301
+(9, 3, 1, N'Ca 3 (13:00 - 15:20)', N'Phòng 303'),  -- phuctm dạy SWR302 lớp SE1801 Ca 3 Phòng 303
+(10, 4, 5, N'Ca 2 (09:30 - 11:50)', N'Phòng 510'), -- maianhnt dạy JPD123 lớp SE1804 Ca 2 Phòng 510
+(10, 4, 1, N'Ca 4 (15:30 - 17:50)', N'Phòng 512'); -- maianhnt dạy JPD123 lớp SE1801 Ca 4 Phòng 512
 
 -- 4.7 Bảng Assignments
 INSERT INTO Assignments (course_id, created_by, title, description, deadline) VALUES 

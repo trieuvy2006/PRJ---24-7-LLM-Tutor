@@ -180,6 +180,7 @@
                                         <th>Sinh viên (MSSV)</th>
                                         <th>Lần nộp</th>
                                         <th>Thời gian nộp</th>
+                                        <th>Bài nộp &amp; Tệp tin</th>
                                         <th>Trạng thái</th>
                                         <th>Điểm</th>
                                         <th>Phản hồi</th>
@@ -195,7 +196,7 @@
                                                     <strong><c:out value="${sub.student_name}"/></strong>
                                                     <c:choose>
                                                         <c:when test="${not empty sub.student_code}">
-                                                            <span class="mssv-tag"><c:out value="${sub.student_code}"/></span>
+                                                             <span class="mssv-tag"><c:out value="${sub.student_code}"/></span>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <span class="mssv-tag no-mssv">Chưa có MSSV</span>
@@ -205,6 +206,23 @@
                                             </td>
                                             <td class="text-center"><span class="attempt-badge">Lần ${sub.attempt_number}</span></td>
                                             <td><fmt:formatDate value="${sub.submitted_at}" pattern="HH:mm -- dd/MM/yyyy"/></td>
+                                            <td>
+                                                <div style="display:flex; flex-direction:column; gap:4px;">
+                                                    <a href="${pageContext.request.contextPath}/assignments?action=download&id=${sub.submission_id}" 
+                                                       class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; font-weight:600; padding:4px 10px; font-size:0.8rem; background:rgba(56, 189, 248, 0.12); border-color:rgba(56, 189, 248, 0.3); color:#38bdf8;" 
+                                                       title="Tải về tệp bài làm của sinh viên">
+                                                        <i class="bi bi-cloud-arrow-down-fill" style="color:#38bdf8; font-size:1rem;"></i> 
+                                                        <span>Tải bài làm</span>
+                                                    </a>
+                                                    <c:if test="${not empty sub.sha256_hash}">
+                                                        <span style="font-family:monospace; font-size:0.72rem; color:var(--text-subtle); cursor:pointer;" 
+                                                              title="Mã băm SHA-256 xác thực: ${sub.sha256_hash} (Nhấn để sao chép)"
+                                                              onclick="navigator.clipboard.writeText('${sub.sha256_hash}'); alert('Đã sao chép mã SHA-256:\n${sub.sha256_hash}');">
+                                                            <i class="bi bi-shield-check" style="color:#10b981;"></i> SHA: ${sub.sha256_hash.length() > 8 ? sub.sha256_hash.substring(0, 8) : sub.sha256_hash}...
+                                                        </span>
+                                                    </c:if>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${sub.status eq 'GRADED'}">
@@ -287,12 +305,23 @@
         </div>
         <div class="modal-body">
             <!-- Thông tin sinh viên -->
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(99,102,241,0.07);border-radius:8px;margin-bottom:1.25rem;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(99,102,241,0.07);border-radius:8px;margin-bottom:0.75rem;">
                 <i class="bi bi-person-circle" style="font-size:1.4rem;color:var(--primary)"></i>
                 <div>
                     <div style="font-weight:700;font-size:0.95rem;" id="gradeStudentName"></div>
                     <div id="gradeStudentCode" class="mssv-tag" style="margin-top:2px;"></div>
                 </div>
+            </div>
+
+            <!-- Xem / Tải bài nộp của sinh viên -->
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px; background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.25); border-radius:8px; margin-bottom:1.25rem;">
+                <div style="overflow:hidden; padding-right:8px;">
+                    <div style="font-size:0.75rem; color:var(--text-subtle); text-transform:uppercase; font-weight:600;">Tệp bài làm sinh viên</div>
+                    <div style="font-weight:600; font-size:0.85rem; color:#38bdf8; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;" id="gradeFileName">Tệp bài nộp (.ZIP)</div>
+                </div>
+                <a id="gradeDownloadLink" href="#" class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; font-weight:600; padding:6px 12px; background:rgba(56,189,248,0.15); border-color:rgba(56,189,248,0.4); color:#38bdf8; white-space:nowrap;">
+                    <i class="bi bi-cloud-arrow-down-fill"></i> Tải xem bài
+                </a>
             </div>
 
             <!-- Input điểm -->

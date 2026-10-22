@@ -37,7 +37,14 @@ public class ClassServlet extends HttpServlet {
             return;
         }
 
-        List<ClassRoom> classes = classDAO.getAllClassesWithCount();
+        List<ClassRoom> classes;
+        if (currentUser.isAdmin()) {
+            // Admin có quyền quản trị toàn bộ danh sách các lớp trong trường
+            classes = classDAO.getAllClassesWithCount();
+        } else {
+            // Giảng viên chỉ xem đúng các lớp học do mình phụ trách (tối đa 2 môn)
+            classes = classDAO.getClassesByInstructor(currentUser.getUser_id(), currentUser.getUsername());
+        }
         request.setAttribute("classes", classes);
         request.getRequestDispatcher("/classes.jsp").forward(request, response);
     }

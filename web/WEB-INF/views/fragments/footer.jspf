@@ -142,4 +142,4 @@
 </div>
 
 <!-- Scripts Controller -->
-<script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+<script src="${pageContext.request.contextPath}/assets/js/app.js" charset="UTF-8"></script>

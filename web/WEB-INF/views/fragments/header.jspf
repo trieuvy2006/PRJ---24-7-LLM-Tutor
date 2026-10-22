@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css">
 <!-- Script chống giật theme (FOUC) -->
 <script>
+    window.AITA_CONTEXT_PATH = '${pageContext.request.contextPath}/';
     (function() {
         var t = localStorage.getItem('aita_theme_pref') || 'dark';
         document.documentElement.setAttribute('data-theme', t);
