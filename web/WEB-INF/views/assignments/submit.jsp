@@ -104,6 +104,9 @@
                             <c:if test="${not empty requestScope.latestSubmission.score}">
                                 &nbsp;|&nbsp;Điểm: <strong>${requestScope.latestSubmission.score}/10</strong>
                             </c:if>
+                            <c:if test="${requestScope.latestSubmission.isCloud()}">
+                                &nbsp;|&nbsp;<span class="badge" style="background:#0284c7; color:#fff; font-size:0.75rem; padding:3px 7px; border-radius:4px;"><i class="bi bi-cloud-check-fill"></i> Supabase Cloud</span>
+                            </c:if>
                         </div>
                     </c:if>
                 </div>
@@ -150,9 +153,15 @@
                                accept=".zip" style="display:none"
                                onchange="handleFileSelect(this)">
 
-                        <div class="form-hint" style="margin-top: 1rem;">
-                            <i class="bi bi-shield-check" style="color:#10b981"></i>
-                            File ZIP của bạn sẽ được lưu trữ an toàn trên hệ thống.
+                        <div class="form-hint" style="margin-top: 1rem; display:flex; flex-direction:column; gap:6px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <i class="bi bi-cloud-check-fill" style="color:#0284c7; font-size:1.1rem;"></i>
+                                <span>Bài nộp được lưu trữ trên <strong>Supabase Cloud Storage</strong> (Bucket: submissions).</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem; color:var(--text-subtle);">
+                                <i class="bi bi-shield-lock-fill" style="color:#10b981;"></i>
+                                <span>Tự động tạo mã băm <strong>SHA-256</strong> để đối soát tính toàn vẹn và chống trùng lặp.</span>
+                            </div>
                         </div>
 
                         <div class="form-actions" style="margin-top: 1.5rem;">
@@ -161,7 +170,7 @@
                             </a>
                             <button type="submit" class="btn btn-primary" id="btnSubmit" disabled>
                                 <i class="bi bi-cloud-arrow-up-fill"></i>
-                                <span id="btnSubmitText">Chọn file trước</span>
+                                <span id="btnSubmitText">Chọn file ZIP trước</span>
                             </button>
                         </div>
                     </form>

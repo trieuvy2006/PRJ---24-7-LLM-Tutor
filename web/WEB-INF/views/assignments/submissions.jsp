@@ -207,20 +207,44 @@
                                             <td class="text-center"><span class="attempt-badge">Lần ${sub.attempt_number}</span></td>
                                             <td><fmt:formatDate value="${sub.submitted_at}" pattern="HH:mm -- dd/MM/yyyy"/></td>
                                             <td>
-                                                <div style="display:flex; flex-direction:column; gap:4px;">
-                                                    <a href="${pageContext.request.contextPath}/assignments?action=download&id=${sub.submission_id}" 
-                                                       class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; font-weight:600; padding:4px 10px; font-size:0.8rem; background:rgba(56, 189, 248, 0.12); border-color:rgba(56, 189, 248, 0.3); color:#38bdf8;" 
-                                                       title="Tải về tệp bài làm của sinh viên">
-                                                        <i class="bi bi-cloud-arrow-down-fill" style="color:#38bdf8; font-size:1rem;"></i> 
-                                                        <span>Tải bài làm</span>
-                                                    </a>
-                                                    <c:if test="${not empty sub.sha256_hash}">
-                                                        <span style="font-family:monospace; font-size:0.72rem; color:var(--text-subtle); cursor:pointer;" 
-                                                              title="Mã băm SHA-256 xác thực: ${sub.sha256_hash} (Nhấn để sao chép)"
-                                                              onclick="navigator.clipboard.writeText('${sub.sha256_hash}'); alert('Đã sao chép mã SHA-256:\n${sub.sha256_hash}');">
-                                                            <i class="bi bi-shield-check" style="color:#10b981;"></i> SHA: ${sub.sha256_hash.length() > 8 ? sub.sha256_hash.substring(0, 8) : sub.sha256_hash}...
-                                                        </span>
-                                                    </c:if>
+                                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                                    <div style="display:flex; gap:6px; align-items:center;">
+                                                        <a href="${pageContext.request.contextPath}/assignments?action=download&id=${sub.submission_id}" 
+                                                           class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; font-weight:600; padding:4px 10px; font-size:0.8rem;" 
+                                                           title="Tải về tệp bài làm của sinh viên">
+                                                            <i class="bi bi-cloud-arrow-down-fill" style="font-size:0.95rem;"></i> 
+                                                            <span>Tải bài làm</span>
+                                                        </a>
+                                                        <c:if test="${sub.isCloud()}">
+                                                            <a href="${sub.file_path}" target="_blank" rel="noopener noreferrer"
+                                                               class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:4px; padding:4px 8px; font-size:0.78rem;" 
+                                                               title="Mở đường dẫn tệp trực tiếp trên Supabase Storage">
+                                                                <i class="bi bi-box-arrow-up-right"></i>
+                                                            </a>
+                                                        </c:if>
+                                                    </div>
+                                                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                                        <c:choose>
+                                                            <c:when test="${sub.isCloud()}">
+                                                                <span class="badge" style="background:#0284c7; color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:4px; font-weight:600;">
+                                                                    <i class="bi bi-cloud-check-fill"></i> Supabase
+                                                                </span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge" style="background:var(--border-color); color:var(--text-subtle); font-size:0.7rem; padding:2px 6px; border-radius:4px;">
+                                                                    <i class="bi bi-hdd"></i> Local
+                                                                </span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <c:if test="${not empty sub.sha256_hash}">
+                                                            <span style="font-family:monospace; font-size:0.72rem; color:var(--text-subtle); cursor:pointer;" 
+                                                                  title="Mã băm SHA-256 xác thực: ${sub.sha256_hash} (Nhấn để sao chép)"
+                                                                  onclick="navigator.clipboard.writeText('${sub.sha256_hash}'); alert('Đã sao chép mã SHA-256:
+${sub.sha256_hash}');">
+                                                                <i class="bi bi-shield-check" style="color:#10b981;"></i> ${sub.sha256_hash.length() > 8 ? sub.sha256_hash.substring(0, 8) : sub.sha256_hash}...
+                                                            </span>
+                                                        </c:if>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td>

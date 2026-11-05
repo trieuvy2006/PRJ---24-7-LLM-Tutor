@@ -71,6 +71,7 @@
                                         <th>Môn học</th>
                                         <th>Lần nộp</th>
                                         <th>Thời gian nộp</th>
+                                        <th>Bài nộp &amp; Cloud</th>
                                         <th>Trạng thái</th>
                                         <th>Điểm</th>
                                         <th>Phản hồi</th>
@@ -93,6 +94,13 @@
                                             </td>
                                             <td>
                                                 <fmt:formatDate value="${sub.submitted_at}" pattern="HH:mm — dd/MM/yyyy"/>
+                                            </td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/assignments?action=download&id=${sub.submission_id}" 
+                                                   class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; font-size:0.8rem; font-weight:600;"
+                                                   title="Tải về file nén bài làm từ Cloud">
+                                                    <i class="bi bi-cloud-arrow-down-fill"></i> Tải bài nộp
+                                                </a>
                                             </td>
                                             <td>
                                                 <c:choose>
@@ -134,7 +142,7 @@
                                                     </c:when>
                                                     <c:when test="${sub.status eq 'FAILED'}">
                                                         <a href="${pageContext.request.contextPath}/chat" class="btn btn-primary btn-sm" style="background:#ef4444; border-color:#ef4444;" title="Nhờ AI Tutor phân tích và sửa lỗi">
-                                                            <i class="bi bi-robot"></i> Hỏi AI sửa lỗi
+                                                            <i class="bi bi-chat-dots-fill"></i> Trợ lý hướng dẫn
                                                         </a>
                                                     </c:when>
                                                     <c:otherwise>

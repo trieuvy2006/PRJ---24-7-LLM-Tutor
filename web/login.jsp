@@ -16,7 +16,7 @@
     <!-- Theme Flash Prevention -->
     <script>
         (function() {
-            var t = localStorage.getItem('aita_theme_pref') || 'dark';
+            var t = localStorage.getItem('aita_theme_pref') || 'light';
             document.documentElement.setAttribute('data-theme', t);
         })();
     </script>
@@ -41,18 +41,18 @@
                 <h2 class="auth-card-title" style="margin: 0; font-size: 22px;">Đăng nhập</h2>
             </div>
 
-            <!-- Thông báo Lỗi Đăng Nhập -->
-            <c:if test="${not empty error or not empty param.error}">
+            <!-- Thông báo Lỗi Đăng Nhập (Chỉ hiển thị khi thực sự có lỗi đăng nhập sai hoặc trái quyền, không hiện khi mới vào web) -->
+            <c:if test="${not empty error or param.error eq 'invalid' or param.error eq 'admin_only' or param.error eq 'forbidden'}">
                 <div class="alert-box alert-error" id="login-error-alert" role="alert">
                     <i class="bi bi-exclamation-octagon-fill" style="font-size:18px; flex-shrink:0"></i>
                     <div>
                         <c:choose>
                             <c:when test="${not empty error}">${error}</c:when>
-                            <c:when test="${param.error eq 'access_denied'}">
-                                Vui lòng đăng nhập để tiếp tục.
-                            </c:when>
                             <c:when test="${param.error eq 'admin_only'}">
-                                Tài khoản không có quyền truy cập trang này.
+                                Tài khoản không có quyền truy cập trang quản trị.
+                            </c:when>
+                            <c:when test="${param.error eq 'forbidden'}">
+                                Bạn không có quyền thực hiện thao tác này.
                             </c:when>
                             <c:when test="${param.error eq 'invalid'}">
                                 Tên đăng nhập hoặc mật khẩu không chính xác!

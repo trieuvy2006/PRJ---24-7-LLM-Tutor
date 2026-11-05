@@ -103,6 +103,22 @@ public class Submission {
     public void setFeedback(String feedback) { this.feedback = feedback; }
 
     /**
+     * Kiểm tra bài nộp có được lưu trữ trên Cloud Storage (Supabase) hay không.
+     */
+    public boolean isCloud() {
+        return file_path != null && (file_path.startsWith("http://") || file_path.startsWith("https://"));
+    }
+
+    /**
+     * Lấy tên file gốc hoặc tên tệp từ đường dẫn/URL.
+     */
+    public String getFileName() {
+        if (file_path == null || file_path.trim().isEmpty()) return "submission.zip";
+        int lastSlash = Math.max(file_path.lastIndexOf('/'), file_path.lastIndexOf('\\'));
+        return lastSlash >= 0 ? file_path.substring(lastSlash + 1) : file_path;
+    }
+
+    /**
      * Lấy nhãn hiển thị thân thiện cho trạng thái bài nộp
      */
     public String getStatusLabel() {

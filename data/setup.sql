@@ -93,7 +93,7 @@ CREATE TABLE Submissions (
     assignment_id INT NOT NULL,
     student_id INT NOT NULL,
     sha256_hash VARCHAR(64) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL, -- Hỗ trợ URL Supabase Cloud Storage
     attempt_number INT NOT NULL DEFAULT 1,
     submitted_at DATETIME DEFAULT GETDATE(),
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',

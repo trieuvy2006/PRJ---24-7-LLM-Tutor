@@ -16,7 +16,7 @@
 <script>
     window.AITA_CONTEXT_PATH = '${pageContext.request.contextPath}/';
     (function() {
-        var t = localStorage.getItem('aita_theme_pref') || 'dark';
+        var t = localStorage.getItem('aita_theme_pref') || 'light';
         document.documentElement.setAttribute('data-theme', t);
         if (window.innerWidth > 900 && localStorage.getItem('aita_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-collapsed-preload');

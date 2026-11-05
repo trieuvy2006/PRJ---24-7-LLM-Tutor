@@ -39,7 +39,7 @@ public class AuthFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             // Chưa đăng nhập, chuyển hướng về trang login
-            res.sendRedirect(req.getContextPath() + "/login?error=Please login first");
+            res.sendRedirect(req.getContextPath() + "/login");
         }
     }
 

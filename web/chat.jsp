@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <title>AI Tutor Chatbot 24/7 — AITA Tutor Platform</title>
+    <title>Trợ lý Học tập — AITA Platform</title>
     <meta name="description" content="Trợ lý gia sư AI 24/7 hỗ trợ giải đáp thắc mắc học tập và lập trình cho học sinh, sinh viên.">
     <%@ include file="/WEB-INF/views/fragments/header.jspf" %>
 </head>
@@ -27,7 +27,7 @@
                 <aside class="chat-history-sidebar">
                     <button type="button" class="btn-new-chat" id="btnNewChat">
                         <i class="bi bi-plus-lg"></i>
-                        <span>+ Cuộc trò chuyện mới</span>
+                        <span>Cuộc trò chuyện mới</span>
                     </button>
 
                     <div class="chat-history-group">
@@ -68,7 +68,7 @@
                     <div class="chat-history-footer">
                         <div class="chat-engine-status">
                             <span class="status-dot-pulse"></span>
-                            <span>Engine: <strong>Gemini AI 24/7</strong></span>
+                            <span>Trạng thái: <strong>Sẵn sàng hỗ trợ</strong></span>
                         </div>
                     </div>
                 </aside>
@@ -79,10 +79,10 @@
                     <div class="chat-main-header">
                         <div class="chat-agent-info">
                             <div class="agent-avatar">
-                                <i class="bi bi-robot"></i>
+                                <i class="bi bi-mortarboard-fill"></i>
                             </div>
                             <div>
-                                <h2>AITA AI Tutor 24/7</h2>
+                                <h2>Trợ lý Học tập AITA</h2>
                             </div>
                         </div>
                         <div class="chat-header-actions">
@@ -97,14 +97,14 @@
                     <div class="chat-messages-container" id="chatMessagesContainer" data-session-id="${chatSessionId}">
                         <!-- Tin nhắn chào mừng từ AI Tutor -->
                         <div class="chat-message ai-message">
-                            <div class="message-avatar">
-                                <i class="bi bi-robot"></i>
+                            <div class="message-avatar" style="background:var(--primary); color:#fff;">
+                                <i class="bi bi-mortarboard-fill"></i>
                             </div>
                             <div class="message-content">
-                                <div class="message-author">AITA AI Tutor <span class="message-time">Hệ thống 24/7</span></div>
+                                <div class="message-author">Trợ lý Học tập AITA <span class="message-time">Hỗ trợ sinh viên</span></div>
                                 <div class="message-bubble">
                                     <p>Xin chào <strong>${sessionScope.currentUser.full_name}</strong>! 👋</p>
-                                    <p>Tôi là <strong>Trợ lý AI Gia sư 24/7</strong> (Cá nhân hóa lộ trình học tập FE-S-03). Tôi sẽ đồng hành cùng bạn:</p>
+                                    <p>Tôi là <strong>Trợ lý Hỗ trợ Học tập &amp; Lập trình</strong>. Tôi đồng hành cùng bạn trong quá trình thực hành:</p>
                                     <ul>
                                         <li>Chuyển đổi các <strong>lỗi biên dịch &amp; ngoại lệ runtime</strong> thành hướng dẫn sư phạm trực quan, dễ hiểu theo thời gian thực.</li>
                                         <li>Tự động phân tích điểm yếu (bao gồm cả kiến thức nền tảng OOP kỳ trước) và cập nhật vào <strong>Lộ trình học tập cá nhân</strong> của bạn.</li>
@@ -136,7 +136,7 @@
                                                 <i class="bi bi-robot"></i>
                                             </div>
                                             <div class="message-content">
-                                                <div class="message-author">AITA AI Tutor <span class="message-time">${msg.sentAt}</span></div>
+                                                <div class="message-author">Trợ lý AITA <span class="message-time">${msg.sentAt}</span></div>
                                                 <div class="message-bubble">${msg.messageText}</div>
                                             </div>
                                         </div>
@@ -173,6 +173,21 @@
 </div>
 
 <!-- Modal & Scripts -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var params = new URLSearchParams(window.location.search);
+        var topic = params.get('topic');
+        var input = document.getElementById('chatInput');
+        if (topic && input) {
+            var msg = "Chào Trợ lý, em đang cần ôn tập về chủ đề: \"" + topic + "\".\nNhờ Trợ lý giải thích rõ các bước thực hành và hướng dẫn em cách làm bài tập củng cố phần này nhé!";
+            input.value = msg;
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+            input.focus();
+        }
+    });
+</script>
 <%@ include file="/WEB-INF/views/fragments/footer.jspf" %>
 </body>
 </html>

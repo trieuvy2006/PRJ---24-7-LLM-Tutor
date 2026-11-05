@@ -11,7 +11,7 @@
   const THEME_KEY = 'aita_theme_pref';
 
   function initTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+    const savedTheme = localStorage.getItem(THEME_KEY) || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeToggleIcons(savedTheme);
   }
@@ -327,9 +327,10 @@
     if (suggestions) suggestions.style.display = 'none';
 
     // 1. Append User Message
+    const userInitial = (window.AITA_USER_INITIAL || document.querySelector('.user-avatar-circle')?.innerText?.trim() || 'P').substring(0, 1).toUpperCase();
     const userMsgHtml = `
       <div class="chat-message user-message">
-        <div class="message-avatar">U</div>
+        <div class="message-avatar">${userInitial}</div>
         <div class="message-content">
           <div class="message-author">B&#7841;n <span class="message-time">V&#7915;a xong</span></div>
           <div class="message-bubble">${escapeHtml(question)}</div>
@@ -345,9 +346,9 @@
     const typingId = 'typing-' + Date.now();
     const typingHtml = `
       <div class="chat-message ai-message" id="${typingId}">
-        <div class="message-avatar"><i class="bi bi-robot"></i></div>
+        <div class="message-avatar" style="background:var(--primary); color:#fff;"><i class="bi bi-mortarboard-fill"></i></div>
         <div class="message-content">
-          <div class="message-author">AITA AI Tutor <span class="message-time">&#272;ang suy ngh&#297;...</span></div>
+          <div class="message-author">Tr&#7907; l&#253; AITA <span class="message-time">&#272;ang suy ngh&#297;...</span></div>
           <div class="message-bubble" style="display:flex; align-items:center; gap:6px; color:var(--text-subtle)">
             <span class="status-dot-pulse"></span>
             <span>&#272;ang ph&#226;n t&#237;ch ng&#7919; c&#7843;nh h&#7897;i tho&#7841;i v&#224; chu&#7849;n b&#7883; c&#226;u tr&#7843; l&#7901;i...</span>
@@ -402,9 +403,9 @@
 
       const aiMsgHtml = `
         <div class="chat-message ai-message">
-          <div class="message-avatar"><i class="bi bi-robot"></i></div>
+          <div class="message-avatar" style="background:var(--primary); color:#fff;"><i class="bi bi-mortarboard-fill"></i></div>
           <div class="message-content">
-            <div class="message-author">AITA AI Tutor <span class="message-time">V&#7915;a xong</span></div>
+            <div class="message-author">Tr&#7907; l&#253; AITA <span class="message-time">V&#7915;a xong</span></div>
             <div class="message-bubble">
               ${data.answerHtml}
               ${bannerHtml}

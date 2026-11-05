@@ -16,6 +16,7 @@ import java.util.List;
 import model.Assignment;
 import model.Submission;
 import model.User;
+import service.SupabaseStorageService;
 
 /**
  * Controller Servlet quản lý toàn bộ luồng Bài tập (Assignments).
@@ -466,6 +467,14 @@ public class AssignmentServlet extends HttpServlet {
             }
 
             String filePath = sub.getFile_path();
+
+            // KIỂM TRA NẾU BÀI NỘP LƯU TRÊN SUPABASE CLOUD STORAGE
+            if (sub.isCloud()) {
+                // Chuyển hướng trình duyệt tải trực tiếp từ Supabase Storage CDN
+                // Người dùng và giảng viên sẽ thấy nguồn tải về là szxduosvqbplxcomxejf.supabase.co
+                response.sendRedirect(filePath);
+                return;
+            }
             java.io.File file = null;
             if (filePath != null && !filePath.trim().isEmpty()) {
                 String justName = new java.io.File(filePath).getName();

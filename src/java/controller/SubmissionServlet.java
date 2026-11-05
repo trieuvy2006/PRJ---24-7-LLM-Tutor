@@ -10,22 +10,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import model.Assignment;
 import model.Submission;
 import model.User;
+import service.SupabaseStorageService;
 
 /**
  * Controller Servlet xử lý việc NỘP BÀI TẬP của Sinh viên.
+ * Tích hợp lưu trữ trên Cloud Storage (Supabase) và đối soát toàn vẹn SHA-256.
  *
  * URL patterns:
  *   GET  /submit?assignment_id=X  → Xem form nộp bài cho bài tập X
- *   POST /submit                  → Xử lý upload file ZIP và lưu Submission
+ *   POST /submit                  → Xử lý upload file ZIP (Supabase Cloud + Local Backup)
  *   GET  /submit?action=history   → Xem lịch sử nộp bài của bản thân
  */
 @WebServlet(name = "SubmissionServlet", urlPatterns = {"/submit"})
@@ -39,7 +45,7 @@ public class SubmissionServlet extends HttpServlet {
     private final AssignmentDAO assignmentDAO = new AssignmentDAO();
     private final SubmissionDAO submissionDAO = new SubmissionDAO();
 
-    // Thư mục lưu file nộp trên server (có thể config lại qua init-param)
+    // Thư mục lưu file backup cục bộ trên server
     private static final String UPLOAD_DIR = "/uploads";
 
     // ─────────────────────────── GET ───────────────────────────
@@ -122,6 +128,7 @@ public class SubmissionServlet extends HttpServlet {
 
             request.setAttribute("assignment", assignment);
             request.setAttribute("latestSubmission", latestSubmission);
+            request.setAttribute("isSupabaseConfigured", SupabaseStorageService.isConfigured());
             request.getRequestDispatcher("/WEB-INF/views/assignments/submit.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
@@ -137,11 +144,12 @@ public class SubmissionServlet extends HttpServlet {
 
         List<Submission> history = submissionDAO.getByStudentId(currentUser.getUser_id());
         request.setAttribute("submissions", history);
+        request.setAttribute("isSupabaseConfigured", SupabaseStorageService.isConfigured());
         request.getRequestDispatcher("/WEB-INF/views/assignments/history.jsp").forward(request, response);
     }
 
     /**
-     * Xử lý upload file và lưu bài nộp vào DB.
+     * Xử lý upload file và lưu bài nộp vào Supabase Storage (Cloud) cùng Database.
      */
     private void handleDoSubmit(HttpServletRequest request, HttpServletResponse response, User currentUser)
             throws ServletException, IOException {
@@ -194,68 +202,91 @@ public class SubmissionServlet extends HttpServlet {
         // Đảm bảo sinh viên đã được ghi danh môn học này
         assignmentDAO.ensureStudentEnrolledCourse(currentUser.getUser_id(), assignment.getCourse_id());
 
-        // Xác định đường dẫn lưu file
+        // Đặt tên file chuẩn quy định: [CourseCode]_[AssignmentId]_[MSSV]_v[Attempt].zip
         String safeStudentCode = currentUser.getStudent_code() != null
                 ? currentUser.getStudent_code() : "U" + currentUser.getUser_id();
         String savedFileName = assignment.getCourse_code() + "_"
                 + assignment.getAssignment_id() + "_"
                 + safeStudentCode + "_v" + attemptNumber + ".zip";
-        String relativePath = UPLOAD_DIR + "/" + savedFileName;
+        String localRelativePath = UPLOAD_DIR + "/" + savedFileName;
 
-        // Xác định thư mục upload an toàn
-        String basePath = getServletContext().getRealPath("");
-        if (basePath == null || basePath.trim().isEmpty()) {
-            basePath = System.getProperty("user.dir");
+        // 1. Đọc toàn bộ nội dung file nhị phân vào byte array
+        byte[] fileBytes;
+        try (InputStream in = filePart.getInputStream();
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            byte[] buf = new byte[8192];
+            int read;
+            while ((read = in.read(buf)) != -1) {
+                baos.write(buf, 0, read);
+            }
+            fileBytes = baos.toByteArray();
         }
-        File uploadFolder = new File(basePath, "uploads");
-        if (!uploadFolder.exists()) {
-            uploadFolder.mkdirs();
-        }
-        File destFile = new File(uploadFolder, savedFileName);
 
-        // Lưu file vật lý vào server và đồng thời tính mã SHA-256 trong 1 lần đọc stream
+        // 2. Tính mã băm SHA-256 từ nội dung byte của file
         String sha256;
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            try (InputStream in = filePart.getInputStream();
-                 java.io.OutputStream out = new java.io.FileOutputStream(destFile)) {
-                byte[] buffer = new byte[8192];
-                int bytesRead;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    digest.update(buffer, 0, bytesRead);
-                    out.write(buffer, 0, bytesRead);
-                }
-            }
-            byte[] hashBytes = digest.digest();
+            byte[] hashBytes = digest.digest(fileBytes);
             StringBuilder sb = new StringBuilder();
             for (byte b : hashBytes) {
                 sb.append(String.format("%02x", b));
             }
             sha256 = sb.toString();
+        } catch (NoSuchAlgorithmException ex) {
+            sha256 = "sha256_" + System.currentTimeMillis();
+        }
 
-            // Lưu thêm một bản vào thư mục nguồn web/uploads để NetBeans Clean & Build không làm mất file
+        // 3. Upload lên Supabase Cloud Storage (nếu đã cấu hình)
+        String finalFilePath = localRelativePath;
+        boolean savedToCloud = false;
+
+        if (SupabaseStorageService.isConfigured()) {
+            SupabaseStorageService.StorageResult cloudResult =
+                    SupabaseStorageService.uploadFile(fileBytes, savedFileName, "application/zip");
+            if (cloudResult.isSuccess()) {
+                finalFilePath = cloudResult.getFileUrl();
+                savedToCloud = true;
+            } else {
+                System.err.println("Notice Supabase Storage upload failed: " + cloudResult.getMessage() + ". Fallback to local storage.");
+            }
+        }
+
+        // 4. Lưu một bản local backup an toàn (phòng hờ khi kiểm tra offline)
+        try {
+            String basePath = getServletContext().getRealPath("");
+            if (basePath == null || basePath.trim().isEmpty()) {
+                basePath = System.getProperty("user.dir");
+            }
+            File uploadFolder = new File(basePath, "uploads");
+            if (!uploadFolder.exists()) {
+                uploadFolder.mkdirs();
+            }
+            File destFile = new File(uploadFolder, savedFileName);
+            try (FileOutputStream fos = new FileOutputStream(destFile)) {
+                fos.write(fileBytes);
+            }
+
+            // Backup vào thư mục web/uploads của dự án
             try {
                 File sourceUploadDir = new File("D:\\Github\\PRJ---24-7-LLM-Tutor\\web\\uploads");
                 if (!sourceUploadDir.exists()) sourceUploadDir.mkdirs();
                 File permanentFile = new File(sourceUploadDir, savedFileName);
-                java.nio.file.Files.copy(destFile.toPath(), permanentFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(destFile.toPath(), permanentFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception ex) {
                 System.err.println("Notice backup upload: " + ex.getMessage());
             }
-        } catch (NoSuchAlgorithmException | IOException e) {
-            request.setAttribute("error", "Lỗi lưu file bài làm: " + e.getMessage());
-            request.setAttribute("assignment", assignment);
-            request.getRequestDispatcher("/WEB-INF/views/assignments/submit.jsp").forward(request, response);
-            return;
+        } catch (IOException e) {
+            System.err.println("Notice local file copy: " + e.getMessage());
         }
 
-        // Lưu Submission vào database
+        // 5. Lưu Submission vào database
         Submission sub = new Submission(assignmentId, currentUser.getUser_id(),
-                sha256, relativePath, attemptNumber, Submission.STATUS_PENDING);
+                sha256, finalFilePath, attemptNumber, Submission.STATUS_PENDING);
         String err = submissionDAO.insert(sub);
 
         if (err == null) {
-            response.sendRedirect(request.getContextPath() + "/submit?action=history&message=submitted");
+            String redirectParam = savedToCloud ? "submitted_cloud" : "submitted";
+            response.sendRedirect(request.getContextPath() + "/submit?action=history&message=" + redirectParam);
         } else {
             request.setAttribute("error", "Nộp bài thất bại: " + err);
             request.setAttribute("assignment", assignment);
@@ -283,23 +314,5 @@ public class SubmissionServlet extends HttpServlet {
             }
         }
         return null;
-    }
-
-    /**
-     * Tính mã SHA-256 của nội dung InputStream và trả về chuỗi HEX 64 ký tự.
-     */
-    private String computeSHA256(InputStream is) throws IOException, NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] buffer = new byte[8192];
-        int bytesRead;
-        while ((bytesRead = is.read(buffer)) != -1) {
-            digest.update(buffer, 0, bytesRead);
-        }
-        byte[] hashBytes = digest.digest();
-        StringBuilder sb = new StringBuilder();
-        for (byte b : hashBytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 }

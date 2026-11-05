@@ -12,7 +12,7 @@
             <div class="brand-logo-badge">A</div>
             <div class="brand-text">
                 <span class="brand-title">AITA</span>
-                <span class="brand-subtitle">24/7 LLM Tutor Platform</span>
+                <span class="brand-subtitle">Học Tập &amp; Hỗ Trợ Sinh Viên</span>
             </div>
         </a>
     </div>
@@ -54,13 +54,13 @@
             </a>
             <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
                 <i class="bi bi-cpu-fill"></i>
-                <span>AI Tutor Platform</span>
-                <span class="nav-badge">GPT/LLM</span>
+                <span>Trợ lý Học tập</span>
+                <span class="nav-badge" style="background:#2563eb">Trợ lý</span>
             </a>
             <a href="${pageContext.request.contextPath}/learning-path" class="nav-link ${pageContext.request.servletPath eq '/WEB-INF/views/learning_path.jsp' ? 'active' : ''}">
                 <i class="bi bi-signpost-split-fill"></i>
                 <span>Quản lý Lộ trình SV</span>
-                <span class="nav-badge" style="background:#6366f1">AI</span>
+                
             </a>
             <a href="#" class="nav-link" onclick="if(window.openSettingsModal){openSettingsModal();} return false;">
                 <i class="bi bi-sliders"></i>
@@ -80,8 +80,8 @@
                 <span>Ngân hàng Bài tập</span>
             </a>
             <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
-                <i class="bi bi-robot"></i>
-                <span>Thử nghiệm AI Tutor</span>
+                <i class="bi bi-chat-dots-fill"></i>
+                <span>Trợ lý Giảng dạy</span>
             </a>
             <a href="${pageContext.request.contextPath}/learning-path" class="nav-link ${pageContext.request.servletPath eq '/WEB-INF/views/learning_path.jsp' ? 'active' : ''}">
                 <i class="bi bi-bar-chart-fill"></i>
@@ -93,14 +93,13 @@
         <c:if test="${empty sessionScope.role or sessionScope.role eq 'STUDENT' or sessionScope.currentUser.role_id == 3}">
             <div class="nav-section-title">Học Tập 24/7</div>
             <a href="${pageContext.request.contextPath}/chat" class="nav-link ${pageContext.request.servletPath eq '/chat.jsp' ? 'active' : ''}">
-                <i class="bi bi-robot"></i>
-                <span>AI Tutor Chatbot</span>
-                <span class="nav-badge" style="background:#10b981">LIVE</span>
+                <i class="bi bi-chat-text-fill"></i>
+                <span>Trợ lý Học tập</span>
+                <span class="nav-badge" style="background:#10b981">24/7</span>
             </a>
             <a href="${pageContext.request.contextPath}/learning-path" class="nav-link ${pageContext.request.servletPath eq '/WEB-INF/views/learning_path.jsp' ? 'active' : ''}">
-                <i class="bi bi-signpost-split-fill"></i>
-                <span>Lộ trình Cá nhân hóa</span>
-                <span class="nav-badge" style="background:#6366f1">AI</span>
+                <i class="bi bi-compass-fill"></i>
+                <span>Lộ trình Học tập</span>
             </a>
             <a href="${pageContext.request.contextPath}/assignments" class="nav-link">
                 <i class="bi bi-journal-code"></i>

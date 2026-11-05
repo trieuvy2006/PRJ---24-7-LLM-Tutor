@@ -5,6 +5,9 @@
 <%@page pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<script>
+    window.AITA_USER_INITIAL = '${not empty sessionScope.currentUser ? sessionScope.currentUser.full_name.substring(0, 1).toUpperCase() : "U"}';
+</script>
 <header class="app-topbar">
     <div class="topbar-left">
         <!-- Nút thu gọn / mở sidebar (Desktop & Mobile) -->
@@ -30,20 +33,14 @@
         </div>
     </div>
 
-    <!-- Ô tìm kiếm nhanh trên Topbar -->
-    <div class="topbar-search-wrapper">
-        <i class="bi bi-search topbar-search-icon"></i>
-        <input type="text" class="topbar-search-input" id="topbarSearch" 
-               placeholder="Tìm nhanh thành viên, mã lớp, email..." 
-               onkeyup="if(window.filterUserTable){var el=document.getElementById('tableSearchInput'); if(el){el.value=this.value; filterUserTable();}}" />
-    </div>
+    <!-- Đã bỏ thanh tìm kiếm không cần thiết để topbar thoáng gọn -->
 
     <!-- Khu vực nút công cụ bên phải Topbar -->
     <div class="topbar-right">
         <!-- AI Tutor Status Indicator -->
         <div class="status-pill">
             <span class="status-dot-pulse"></span>
-            <span>AI Tutor: Online</span>
+            <span>Hệ thống: Trực tuyến</span>
         </div>
 
         <!-- Chuông thông báo -->
