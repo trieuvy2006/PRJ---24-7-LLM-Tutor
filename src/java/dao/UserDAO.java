@@ -369,4 +369,48 @@ public class UserDAO extends DBContext {
             System.err.println("Lỗi enrollStudentCourses: " + e.getMessage());
         }
     }
+
+    /**
+     * Lấy danh sách người dùng theo phân trang (Pagination).
+     * @param page Số trang hiện tại (bắt đầu từ 1)
+     * @param pageSize Số lượng bản ghi mỗi trang
+     * @return Danh sách người dùng của trang tương ứng
+     */
+    public List<User> getUsersByPage(int page, int pageSize) {
+        List<User> list = new ArrayList<>();
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
+        int offset = (page - 1) * pageSize;
+        String sql = "SELECT user_id, role_id, username, password_hash, full_name, email, phone, student_code "
+                   + "FROM dbo.Users ORDER BY user_id ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRowToUser(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getUsersByPage: " + e.getMessage());
+        }
+        return list;
+    }
+
+    /**
+     * Đếm tổng số lượng người dùng trong cơ sở dữ liệu.
+     * @return Tổng số người dùng
+     */
+    public int getTotalUserCount() {
+        String sql = "SELECT COUNT(*) FROM Users";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi getTotalUserCount: " + e.getMessage());
+        }
+        return 0;
+    }
 }

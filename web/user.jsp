@@ -163,13 +163,11 @@
                     </div>
                 </div>
 
-                <!-- Phân trang giao diện sạch -->
+                <!-- Phân trang giao diện thông minh (10 dòng/trang) -->
                 <div class="table-pagination">
-                    <div>Hiển thị 1 đến ${requestScope.data != null ? requestScope.data.size() : 0} trong số ${requestScope.data != null ? requestScope.data.size() : 0} mục</div>
-                    <div class="pagination-pages">
-                        <button type="button" class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-                        <button type="button" class="page-btn active">1</button>
-                        <button type="button" class="page-btn" disabled><i class="bi bi-chevron-right"></i></button>
+                    <div id="userPaginationInfo">Hiển thị 1 đến 10 trong số ${requestScope.data != null ? requestScope.data.size() : 0} mục</div>
+                    <div class="pagination-pages" id="userPaginationPages">
+                        <!-- Nút phân trang tự động điều khiển bởi JavaScript -->
                     </div>
                 </div>
             </div>
@@ -178,6 +176,19 @@
 </div>
 
 <!-- Modal xác nhận xóa & Script Controller -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof window.initTablePagination === 'function') {
+            window.userPaginator = window.initTablePagination({
+                tableBodyId: 'userTableBody',
+                rowSelector: '.user-row',
+                pagesContainerId: 'userPaginationPages',
+                infoContainerId: 'userPaginationInfo',
+                pageSize: 10
+            });
+        }
+    });
+</script>
 <%@ include file="/WEB-INF/views/fragments/footer.jspf" %>
 </body>
 </html>

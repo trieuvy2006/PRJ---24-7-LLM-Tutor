@@ -10,6 +10,10 @@
     <title>Trợ lý Học tập — AITA Platform</title>
     <meta name="description" content="Trợ lý gia sư AI 24/7 hỗ trợ giải đáp thắc mắc học tập và lập trình cho học sinh, sinh viên.">
     <%@ include file="/WEB-INF/views/fragments/header.jspf" %>
+    <!-- Thư viện Markdown & Code Syntax Highlighting cho AI Tutor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
 
@@ -137,7 +141,10 @@
                                             </div>
                                             <div class="message-content">
                                                 <div class="message-author">Trợ lý AITA <span class="message-time">${msg.sentAt}</span></div>
-                                                <div class="message-bubble">${msg.messageText}</div>
+                                                <div class="message-bubble">
+                                                    <textarea class="raw-ai-content" style="display:none;"><c:out value="${msg.messageText}"/></textarea>
+                                                    <div class="markdown-rendered">${msg.messageText}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </c:otherwise>
@@ -176,6 +183,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        if (typeof window.initAiChatMarkdown === 'function') {
+            window.initAiChatMarkdown();
+        }
         var params = new URLSearchParams(window.location.search);
         var topic = params.get('topic');
         var input = document.getElementById('chatInput');

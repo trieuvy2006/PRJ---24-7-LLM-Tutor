@@ -83,6 +83,7 @@ public class UserServlet extends HttpServlet {
         UserDAO c = new UserDAO();
         List<User> list = c.getAll();
         request.setAttribute("data", list);
+        request.setAttribute("totalCount", c.getTotalUserCount());
         request.getRequestDispatcher("/user.jsp").forward(request, response);
     }
 

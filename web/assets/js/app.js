@@ -311,7 +311,203 @@
     }
   };
 
-  window.handleChatSubmit = function (e) {
+  
+  // ── MARKDOWN & CODE HIGHLIGHTING ENGINE FOR AI TUTOR ──
+  window.formatAiMarkdown = function (text) {
+    if (!text) return '';
+    if (typeof marked !== 'undefined') {
+      try {
+        marked.setOptions({
+          gfm: true,
+          breaks: true
+        });
+        const rawHtml = marked.parse(text);
+        return window.enhanceCodeBlocks(rawHtml);
+      } catch (e) {
+        console.error('Markdown parse error:', e);
+        return text;
+      }
+    }
+    return text;
+  };
+
+  window.enhanceCodeBlocks = function (html) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    tempDiv.querySelectorAll('pre code').forEach((codeBlock) => {
+      if (typeof hljs !== 'undefined') {
+        hljs.highlightElement(codeBlock);
+      }
+
+      let langName = 'Code';
+      codeBlock.classList.forEach((cls) => {
+        if (cls.startsWith('language-')) {
+          langName = cls.replace('language-', '').toUpperCase();
+        }
+      });
+
+      const pre = codeBlock.parentElement;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-container';
+
+      const header = document.createElement('div');
+      header.className = 'code-block-header';
+      header.innerHTML = `
+        <span class="code-lang-label"><i class="bi bi-code-slash"></i> ${langName}</span>
+        <button type="button" class="btn-copy-code" onclick="window.copyCodeSnippet(this)" title="Sao chép mã nguồn">
+          <i class="bi bi-clipboard"></i> <span>Sao chép</span>
+        </button>
+      `;
+
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(header);
+      wrapper.appendChild(pre);
+    });
+
+    return tempDiv.innerHTML;
+  };
+
+  window.copyCodeSnippet = function (btn) {
+    const wrapper = btn.closest('.code-block-container');
+    const code = wrapper ? wrapper.querySelector('code') : null;
+    if (!code) return;
+
+    const textToCopy = code.innerText || code.textContent;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const span = btn.querySelector('span');
+      const icon = btn.querySelector('i');
+      if (span) span.textContent = 'Đã sao chép!';
+      if (icon) icon.className = 'bi bi-check-lg';
+      btn.classList.add('copied');
+
+      setTimeout(() => {
+        if (span) span.textContent = 'Sao chép';
+        if (icon) icon.className = 'bi bi-clipboard';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(err => {
+      console.error('Copy failed:', err);
+    });
+  };
+
+  window.initAiChatMarkdown = function () {
+    document.querySelectorAll('.ai-message .message-bubble').forEach((bubble) => {
+      const rawEl = bubble.querySelector('.raw-ai-content');
+      if (rawEl && rawEl.value) {
+        const rendered = window.formatAiMarkdown(rawEl.value);
+        const container = bubble.querySelector('.markdown-rendered');
+        if (container) {
+          container.innerHTML = rendered;
+        } else {
+          bubble.innerHTML = rendered;
+        }
+      }
+    });
+  };
+
+  // ── REUSABLE TABLE PAGINATION CONTROLLER ──
+  window.initTablePagination = function (config) {
+    const tableBody = document.getElementById(config.tableBodyId);
+    const pagesContainer = document.getElementById(config.pagesContainerId);
+    const infoContainer = document.getElementById(config.infoContainerId);
+    if (!tableBody || !pagesContainer) return null;
+
+    let currentPage = 1;
+    const pageSize = config.pageSize || 10;
+
+    function getEligibleRows() {
+      const allRows = Array.from(tableBody.querySelectorAll('tr' + (config.rowSelector || '')));
+      return allRows.filter(r => r.dataset.filteredOut !== 'true');
+    }
+
+    function render() {
+      const allRows = Array.from(tableBody.querySelectorAll('tr' + (config.rowSelector || '')));
+      const eligibleRows = getEligibleRows();
+      const total = eligibleRows.length;
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, total);
+
+      allRows.forEach(row => {
+        if (row.dataset.filteredOut === 'true') {
+          row.style.display = 'none';
+        } else {
+          const idx = eligibleRows.indexOf(row);
+          if (idx >= startIndex && idx < endIndex) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+
+      if (infoContainer) {
+        if (total === 0) {
+          infoContainer.textContent = 'Không có dữ liệu phù hợp';
+        } else {
+          infoContainer.innerHTML = `Hiển thị <strong>${startIndex + 1}</strong> đến <strong>${endIndex}</strong> trong số <strong>${total}</strong> mục`;
+        }
+      }
+
+      let html = '';
+      const prevDisabled = currentPage === 1 ? 'disabled' : '';
+      html += `<button type="button" class="page-btn ${prevDisabled}" ${prevDisabled} onclick="window.userPaginator && window.userPaginator.goToPage(${currentPage - 1})" title="Trang trước"><i class="bi bi-chevron-left"></i></button>`;
+
+      const maxButtons = 5;
+      let startP = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+      let endP = Math.min(totalPages, startP + maxButtons - 1);
+      if (endP - startP + 1 < maxButtons) {
+        startP = Math.max(1, endP - maxButtons + 1);
+      }
+
+      if (startP > 1) {
+        html += `<button type="button" class="page-btn" onclick="window.userPaginator && window.userPaginator.goToPage(1)">1</button>`;
+        if (startP > 2) {
+          html += `<span class="page-btn-ellipsis" style="padding:0 6px; color:var(--text-muted); align-self:center;">...</span>`;
+        }
+      }
+
+      for (let p = startP; p <= endP; p++) {
+        html += `<button type="button" class="page-btn ${p === currentPage ? 'active' : ''}" onclick="window.userPaginator && window.userPaginator.goToPage(${p})">${p}</button>`;
+      }
+
+      if (endP < totalPages) {
+        if (endP < totalPages - 1) {
+          html += `<span class="page-btn-ellipsis" style="padding:0 6px; color:var(--text-muted); align-self:center;">...</span>`;
+        }
+        html += `<button type="button" class="page-btn" onclick="window.userPaginator && window.userPaginator.goToPage(${totalPages})">${totalPages}</button>`;
+      }
+
+      const nextDisabled = (currentPage === totalPages || total === 0) ? 'disabled' : '';
+      html += `<button type="button" class="page-btn ${nextDisabled}" ${nextDisabled} onclick="window.userPaginator && window.userPaginator.goToPage(${currentPage + 1})" title="Trang sau"><i class="bi bi-chevron-right"></i></button>`;
+
+      pagesContainer.innerHTML = html;
+    }
+
+    const api = {
+      goToPage: function (p) {
+        currentPage = p;
+        render();
+      },
+      reset: function () {
+        currentPage = 1;
+        render();
+      },
+      refresh: function () {
+        render();
+      }
+    };
+
+    render();
+    return api;
+  };
+
+window.handleChatSubmit = function (e) {
     if (e && e.preventDefault) e.preventDefault();
     const input = document.getElementById('chatInput');
     const container = document.getElementById('chatMessagesContainer');
@@ -407,7 +603,7 @@
           <div class="message-content">
             <div class="message-author">Tr&#7907; l&#253; AITA <span class="message-time">V&#7915;a xong</span></div>
             <div class="message-bubble">
-              ${data.answerHtml}
+              ${typeof window.formatAiMarkdown === "function" ? window.formatAiMarkdown(data.answerHtml) : data.answerHtml}
               ${bannerHtml}
             </div>
           </div>
